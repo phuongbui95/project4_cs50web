@@ -1,5 +1,7 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
-    TODO
+    <div id="like-button"></div>
+    <script type="text/babel" src="{% static 'network/react/LikeButton.js' %}"></script>
 {% endblock %}
