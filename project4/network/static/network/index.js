@@ -1,19 +1,26 @@
+// Start with first post
+let counter = 1;
+// Load posts 10 at a time
+const quantity = 10;
+
 document.addEventListener('DOMContentLoaded', function() {
 
     // Use buttons to toggle between views
-    document.querySelector('#all-posts').addEventListener('click', () => load_view('All Posts'));
-    document.querySelector('#profile').addEventListener('click', () => load_view('Profile'));
-    document.querySelector('#following').addEventListener('click', () => load_view('Following'));
-    document.querySelector('#compose').addEventListener('click', compose());
-    
-    let profile_name = document.querySelector('#profile');
-    profile_name.addEventListener('click', () => load_view('All Posts'));
-    let username = profile_name.innerText;
-    profile_name.innerHTML = `Hello ${username.toUpperCase()} ^.^`;
+    document.querySelector('#all-posts').addEventListener('click', () => load_view('all posts'));
+    document.querySelector('#profile').addEventListener('click', () => load_view('profile'));
+    document.querySelector('#following').addEventListener('click', () => load_view('following'));
+    document.querySelector('#compose').addEventListener('click', compose); //Do not use () to call a none element function in Javascript
 
     ////----- By default, load all posts
-    // load_view('All Posts');
+    load_view('all posts');
 });
+
+// If scrolled to bottom, load the next 10 posts
+window.onscroll = () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        load();
+    }
+};
 
 function compose() {
     console.log('create a post!');
@@ -37,16 +44,34 @@ function load_view(page_view) {
     document.querySelector('#content-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
     
-     // Show the view name
-     document.querySelector('#content-view').innerHTML = `<h3>${page_view.charAt(0).toUpperCase() + page_view.slice(1)}</h3>`;
-    // See posts
-    displayContent(page_view); // List all posts in this page_view
+    // Show the view name
+    document.querySelector('#content-view').innerHTML = `<h3>${page_view.charAt(0).toUpperCase() + page_view.slice(1)}</h3>`;
+
+    // Set start and end post numbers, and update counter
+    const start = counter;
+    const end = start + quantity - 1;
+    counter = end + 1;
+    // Get new posts and add posts
+    fetch(`posts?start=${start}&end=${end}`)
+    .then(response => response.json())
+    .then(data => {
+        data.posts.forEach(add_post);
+    })
+
+
 }
 
-// list all expected posts in particular view
-function displayContent(page_view) {
-    return;
-}
+// Add a new post with given contents to DOM
+function add_post(contents) {
+
+    // Create new post
+    const post = document.createElement('div');
+    post.className = 'post';
+    post.innerHTML = `${contents}: Content of this post`;
+
+    // Add post to DOM
+    document.querySelector('#content-view').append(post);
+};
 
 function submit_post() {
     return;

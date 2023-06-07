@@ -4,11 +4,12 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.urls import reverse
 
-# import json
-# from django.http import JsonResponse
+import json
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
+import time
 
 from .models import User
 
@@ -73,5 +74,23 @@ def register(request):
 @login_required
 def compose(request):
     pass
+
+def posts(request):
+    # Get start and end points
+    start = int(request.GET.get("start") or 0)
+    end = int(request.GET.get("end") or (start + 9))
+
+    # Generate list of posts
+    data = []
+    for i in range(start, end + 1):
+        data.append(f"Post #{i}")
+
+    # Artificially delay speed of response
+    time.sleep(1)
+
+    # Return list of posts
+    return JsonResponse({
+        "posts": data
+    })
 
     

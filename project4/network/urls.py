@@ -8,5 +8,5 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
-    # path("posts/<int:num>", views.post, name="post")
+    path("posts/", views.posts, name="posts") #remember the ending forward slash '/'
 ]

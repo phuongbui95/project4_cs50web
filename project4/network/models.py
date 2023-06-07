@@ -14,6 +14,15 @@ class Post(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     likeNum = models.PositiveBigIntegerField(default=0)
 
+    # def serialize(self):
+    #     return {
+    #         "post_id": self.id,
+    #         "post_owner": self.user,
+    #         "content": self.content,
+    #         "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
+    #         "like_number": self.likeNum,
+    #     }
+
 # Like
 
 # Follower
