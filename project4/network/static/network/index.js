@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('#all-posts').addEventListener('click', () => load_view('all posts'));
     document.querySelector('#profile').addEventListener('click', () => load_view('profile'));
     document.querySelector('#following').addEventListener('click', () => load_view('following'));
-    document.querySelector('#compose').addEventListener('click', compose); //Do not use () to call a none element function in Javascript
+    document.querySelector('#compose').addEventListener('click', compose); //Do not use () to pass a function in Javascript event handler
 
     ////----- By default, load all posts
     load_view('all posts');
@@ -38,26 +38,26 @@ function compose() {
     }
 }
 
-function load_view(page_view) {
-    console.log(`view: ${page_view}`);
+function load_view(viewpage) {
+    console.log(`view: ${viewpage}`);
     // Show the mailbox and hide other views
     document.querySelector('#content-view').style.display = 'block';
     document.querySelector('#compose-view').style.display = 'none';
     
     // Show the view name
-    document.querySelector('#content-view').innerHTML = `<h3>${page_view.charAt(0).toUpperCase() + page_view.slice(1)}</h3>`;
+    document.querySelector('#content-view').innerHTML = `<h3>${viewpage.charAt(0).toUpperCase() + page_view.slice(1)}</h3>`;
 
     // Set start and end post numbers, and update counter
     const start = counter;
     const end = start + quantity - 1;
-    counter = end + 1;
+    // counter = end + 1; // update counter here but why?
     // Get new posts and add posts
+    // Fetch API: https://www.w3schools.com/js/js_api_fetch.asp
     fetch(`posts?start=${start}&end=${end}`)
     .then(response => response.json())
     .then(data => {
         data.posts.forEach(add_post);
     })
-
 
 }
 
