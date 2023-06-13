@@ -69,7 +69,8 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
-    
+
+@csrf_exempt
 @login_required
 def compose(request):
     # Composing a new post must be via POST
@@ -77,7 +78,7 @@ def compose(request):
         return JsonResponse({"error": "POST request required"}, status=400)
     
     # Get content of post
-    data = json.loads(request.body) #body?
+    data = json.loads(request.body) #body?????????????
     content = data.get("body", "")
 
     # Create a post for all users, plus sender (go to viewpage = "all posts")
@@ -94,7 +95,7 @@ def compose(request):
     return JsonResponse({"message": "Email sent successfully."}, status=201)
 
 def viewpage(request, viewpage):
-    if viewpage == "all-posts":
+    if viewpage == "all":
         posts = Post.objects.all()
     elif viewpage == "following":
         return JsonResponse({"message": "TBA"}, status=201)
@@ -108,6 +109,7 @@ def viewpage(request, viewpage):
     posts = posts.order_by("-timestamp").all()
     return JsonResponse([post.serialize() for post in posts], safe=False)
 
+@csrf_exempt
 @login_required
 def post(request, post_id):
     # Query for requested post
