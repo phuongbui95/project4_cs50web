@@ -1,16 +1,16 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 
 import json
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.core import serializers
 
 import time
-
 from .models import User, Post
 
 
@@ -79,20 +79,15 @@ def compose(request):
     
     # Get content of post
     data = json.loads(request.body) #body?????????????
-    content = data.get("body", "")
+    content = data.get("content", "")
 
-    # Create a post for all users, plus sender (go to viewpage = "all posts")
-    recipients = User.objects.all().username
-    users = set()
-    users.add(request.user)
-    users.update(recipients)    
-    for user in users:
-        post = Post(
-            sender=user,
-            content=content
-        )
-        post.save()
-    return JsonResponse({"message": "Email sent successfully."}, status=201)
+    # Get the user instance from the database
+    post = Post(
+        sender=request.user,
+        content=content
+    )
+    post.save()
+    return JsonResponse({"message": "Post sent successfully."}, status=201)
 
 def viewpage(request, viewpage):
     if viewpage == "all":
@@ -101,13 +96,15 @@ def viewpage(request, viewpage):
         return JsonResponse({"message": "TBA"}, status=201)
     elif viewpage == "profile":
         posts = Post.objects.filter(sender=request.user)
-        # return JsonResponse({"message": "TBA"}, status=201)
     else:
         return JsonResponse({"message": "Invalid viewpage"}, status=400)
     
     # Return posts in reverse chronological order
     posts = posts.order_by("-timestamp").all()
     return JsonResponse([post.serialize() for post in posts], safe=False)
+
+    # serialized_posts = serializers.serialize('json', posts)
+    # return JsonResponse(serialized_posts, safe=False)
 
 @csrf_exempt
 @login_required
@@ -121,6 +118,7 @@ def post(request, post_id):
     # Return post contents
     if request.method == "GET":
         return JsonResponse(post.serialize())
+        
     # Edit post
     elif request.method == "PUT":
         pass

@@ -62,8 +62,11 @@ function load_view(viewpage) {
 // Show viewpage
 function show_page(viewpage) {
     // Send a GET request to API
-    fetch(`/posts/${viewpage}`)
-    .then(response => response.json())
+    fetch(`posts/${viewpage}`)
+    .then(response => {
+        console.log(response);
+        response.json()
+    })
     .then(posts => {
         console.log(posts);
         posts.forEach(post => {
