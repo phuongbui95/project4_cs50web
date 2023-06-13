@@ -41,6 +41,7 @@ function compose() {
         if(post_content === '') alert('Cannot submit empty post!');
         else submit_post(post_content);
         load_view('all'); //Redirect to all-posts view
+
     }
     
 }
