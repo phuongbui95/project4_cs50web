@@ -1,14 +1,13 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.urls import reverse
 
 import json
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from django.core import serializers
 
 import time
 from .models import User, Post
@@ -78,7 +77,7 @@ def compose(request):
         return JsonResponse({"error": "POST request required"}, status=400)
     
     # Get content of post
-    data = json.loads(request.body) #body?????????????
+    data = json.loads(request.body)
     content = data.get("content", "")
 
     # Get the user instance from the database
@@ -87,6 +86,7 @@ def compose(request):
         content=content
     )
     post.save()
+
     return JsonResponse({"message": "Post sent successfully."}, status=201)
 
 def viewpage(request, viewpage):
@@ -102,9 +102,6 @@ def viewpage(request, viewpage):
     # Return posts in reverse chronological order
     posts = posts.order_by("-timestamp").all()
     return JsonResponse([post.serialize() for post in posts], safe=False)
-
-    # serialized_posts = serializers.serialize('json', posts)
-    # return JsonResponse(serialized_posts, safe=False)
 
 @csrf_exempt
 @login_required
