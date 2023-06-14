@@ -91,7 +91,7 @@ function show_content(viewpage) {
     }
     // Display Follow button in profile page
     let profile_selected = document.querySelector('#profile');
-    if (viewpage !== profile_selected.text) {
+    if (viewpage === profile_selected.text) {
         follow_btn.style.display = 'none';    
     }
 
