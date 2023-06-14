@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Use buttons to toggle between views
     document.querySelector('#all-posts').addEventListener('click', () => load_view('all'));
-    document.querySelector('#profile').addEventListener('click', () => load_view('profile'));
+    let profile_Selected = document.querySelector('#profile');
+    profile_Selected.addEventListener('click', () => load_view(profile_Selected.textContent)); //textContent
     document.querySelector('#following').addEventListener('click', () => load_view('following'));
     document.querySelector('form').addEventListener('click', compose()); //call out result of compose() after 'submit" button is clicked
     // document.querySelector('#compose-view').addEventListener('click', compose); //Do not call out result of compose() after click on "create post" link
@@ -52,14 +53,13 @@ function load_view(viewpage) {
                                                             ${text.charAt(0).toUpperCase() + text.slice(1)}
                                                         </h3>`;
     
-    // Get new posts and add posts
-    // Fetch API: https://www.w3schools.com/js/js_api_fetch.asp
-    show_page(viewpage);
+    // View content of page
+    show_content(viewpage);
 
 }
 
 // Show viewpage
-function show_page(viewpage) {
+function show_content(viewpage) {
     // Send a GET request to API
     fetch(`posts/${viewpage}`)
     .then(response => response.json())
