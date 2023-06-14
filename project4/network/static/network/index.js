@@ -74,10 +74,10 @@ function show_page(viewpage) {
         console.log(posts);
         posts.forEach(post => {
             const post_div = document.createElement('div');
-            post_div.className = `${viewpage} post_${post.id} posts-grid`;
-            post_div.innerHTML = `<div class="gridItem-sender">${post.sender}</div>
-                                <div class="gridItem-content">${post.content}</div>
-                                <div class="gridItem-timestamp">${post.timestamp}</div>
+            post_div.className = `${viewpage} post_${post.id}`;
+            post_div.innerHTML = `<div class="sender">${post.sender}</div>
+                                <div class="content">${post.content}</div>
+                                <div class="timestamp">${post.timestamp}</div>
                                 <button name="like" type="submit" class="btn btn-primary">Like</button>`;
             post_div.style.border = '1px solid black';
             document.querySelector('#content-view').append(post_div);

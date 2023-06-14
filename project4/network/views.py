@@ -90,12 +90,15 @@ def compose(request):
     return JsonResponse({"message": "Post sent successfully."}, status=201)
 
 def viewpage(request, viewpage):
+    # Viewpage's conditions
     if viewpage == "all":
         posts = Post.objects.all()
     elif viewpage == "following":
         return JsonResponse({"message": "TBA"}, status=201)
     elif viewpage == "profile":
         posts = Post.objects.filter(sender=request.user)
+    elif User.objects.get(username=viewpage): #cannot use this line out of the condition statment => it will break Json
+        posts = Post.objects.filter(sender=User.objects.get(username=viewpage))
     else:
         return JsonResponse({"message": "Invalid viewpage"}, status=400)
     
