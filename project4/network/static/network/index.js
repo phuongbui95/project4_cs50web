@@ -1,10 +1,9 @@
 // DOM Content is loaded
 document.addEventListener('DOMContentLoaded', function() {
-
     // Use buttons to toggle between views
     document.querySelector('#all-posts').addEventListener('click', () => load_view('all'));
-    let profile_Selected = document.querySelector('#profile');
-    profile_Selected.addEventListener('click', () => load_view(profile_Selected.textContent)); //textContent
+    let profile_selected = document.querySelector('#profile');
+    profile_selected.addEventListener('click', () => load_view(profile_selected.textContent)); //textContent
     document.querySelector('#following').addEventListener('click', () => load_view('following'));
     document.querySelector('form').addEventListener('click', compose()); //call out result of compose() after 'submit" button is clicked
     // document.querySelector('#compose-view').addEventListener('click', compose); //Do not call out result of compose() after click on "create post" link
@@ -27,6 +26,11 @@ function submit_post(contentVar) {
 }
 
 function compose() {
+    let profile_selected = document.querySelector('#profile');
+    if (profile_selected === null) {
+        document.querySelector('#compose-view').style.display = 'none';
+    } 
+
     // Clear out composition fields
     document.querySelector('#compose-body').value = '';
     
@@ -45,7 +49,8 @@ function compose() {
 
 function load_view(viewpage) {
     console.log(`view: ${viewpage}`);
-    
+    document.querySelector('#intro-view').style.display = 'none';
+
     // Show the view name
     let text = viewpage;
     if (viewpage === "all") text = "all post";
@@ -55,15 +60,15 @@ function load_view(viewpage) {
     
     // View content of page
     show_content(viewpage);
-
 }
 
 // Show viewpage
 function show_content(viewpage) {
+    document.querySelector('#compose-view').style.display = 'block';
     // Profile view
     const follow_div = document.createElement('div');
     follow_div.id = `profile_${viewpage}`;
-    follow_div.innerHTML = `<button class="follow-btn">Follow/Unfollow</button>
+    follow_div.innerHTML = `<button class="follow-btn">Follow</button>
                             <div class="follower"><span>Followers: ###</span></div>
                             <div class="following"><span>Following: ###</span></div>
                             `;
@@ -71,12 +76,23 @@ function show_content(viewpage) {
         document.querySelector('#content-view').append(follow_div);
     }
 
-    document.querySelector(`#profile_${viewpage}`).addEventListener('click', () => {
-        alert('Hello');
+    let follow_btn = document.querySelector(`#profile_${viewpage} > .follow-btn`);
+    follow_btn.addEventListener('click', () => {
+        if(follow_btn.textContent === "Follow") {
+            follow_btn.innerHTML = "Unfollow"
+        } else {
+            follow_btn.innerHTML = "Follow"
+        }
     })
 
+    // Display Follow div
     if (viewpage === "all" || viewpage === "following") {
         follow_div.style.display = 'none';    
+    }
+    // Display Follow button in profile page
+    let profile_selected = document.querySelector('#profile');
+    if (viewpage !== profile_selected.text) {
+        follow_btn.style.display = 'none';    
     }
 
     // Posts view
