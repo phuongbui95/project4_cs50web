@@ -26,6 +26,7 @@ class Post(models.Model):
             "like_number": self.likeNum
         }
 
-# Like
-
 # Follower
+class Follow(models.Model):
+    pass
+# Like

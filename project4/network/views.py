@@ -128,6 +128,9 @@ def post(request, post_id):
             "error": "GET or PUT request required."
         }, status=400)
 
-    
+@csrf_exempt
+@login_required
+def follow(request, name):
+    pass 
 
     

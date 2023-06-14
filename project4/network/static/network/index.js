@@ -60,7 +60,26 @@ function load_view(viewpage) {
 
 // Show viewpage
 function show_content(viewpage) {
-    // Send a GET request to API
+    // Profile view
+    const follow_div = document.createElement('div');
+    follow_div.id = `profile_${viewpage}`;
+    follow_div.innerHTML = `<button class="follow-btn">Follow/Unfollow</button>
+                            <div class="follower"><span>Followers: ###</span></div>
+                            <div class="following"><span>Following: ###</span></div>
+                            `;
+    if (!document.querySelector(`#content-view > div#profile_${viewpage}`)) {
+        document.querySelector('#content-view').append(follow_div);
+    }
+
+    document.querySelector(`#profile_${viewpage}`).addEventListener('click', () => {
+        alert('Hello');
+    })
+
+    if (viewpage === "all" || viewpage === "following") {
+        follow_div.style.display = 'none';    
+    }
+
+    // Posts view
     fetch(`posts/${viewpage}`)
     .then(response => response.json())
     .then(posts => {

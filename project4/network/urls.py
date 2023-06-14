@@ -12,5 +12,6 @@ urlpatterns = [
     # API routes
     path("posts", views.compose, name="compose"),
     path("posts/<int:post_id>", views.post, name="post"),
-    path("posts/<str:viewpage>", views.viewpage, name="viewpage")
+    path("posts/<str:viewpage>", views.viewpage, name="viewpage"),
+    path("profile/<str:name>",views.follow, name="follow")
 ]
