@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -130,7 +130,38 @@ def post(request, post_id):
 
 @csrf_exempt
 @login_required
-def follow(request, name):
-    pass 
+def follow(request, profile_id):
+    # Query for requested profile
+    try:
+        profile = User.objects.get(user=request.user, pk=profile_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "User not found."}, status=404)
+    
+    # Check followers/following users
+    data = json.loads(request.body)
+    followers = [follower.strip() for follower in data.get("follower").split(",")]
+    following = [following.strip() for following in data.get("following").split(",")]
+
+    # for follower in followers:
+    #     try:
+    #         user = User.objects.get(email=email)
+    #         recipients.append(user)
+    #     except User.DoesNotExist:
+    #         return JsonResponse({
+    #             "error": f"User with email {email} does not exist."
+    #         }, status=400)
+        
+    # Return profile contents
+    if request.method == "GET":
+        return JsonResponse(profile.serialize())
+        
+    # Edit profile
+    elif request.method == "PUT":
+        pass
+    # Profile must be via GET or PUT
+    else:
+        return JsonResponse({
+            "error": "GET or PUT request required."
+        }, status=400) 
 
     

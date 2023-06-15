@@ -69,31 +69,38 @@ function show_content(viewpage) {
     const follow_div = document.createElement('div');
     follow_div.id = `profile_${viewpage}`;
     follow_div.innerHTML = `<button class="follow-btn">Follow</button>
-                            <div class="follower"><span>Followers: ###</span></div>
-                            <div class="following"><span>Following: ###</span></div>
+                            <div class="follower"><a href="#">Followers</a>: 0</div>
+                            <div class="following"><a href="#">Following</a>: 0</div>
                             `;
     if (!document.querySelector(`#content-view > div#profile_${viewpage}`)) {
         document.querySelector('#content-view').append(follow_div);
     }
 
-    let follow_btn = document.querySelector(`#profile_${viewpage} > .follow-btn`);
-    follow_btn.addEventListener('click', () => {
-        if(follow_btn.textContent === "Follow") {
-            follow_btn.innerHTML = "Unfollow"
-        } else {
-            follow_btn.innerHTML = "Follow"
-        }
-    })
-
-    // Display Follow div
+    // Hide Follow div if not profile page
     if (viewpage === "all" || viewpage === "following") {
         follow_div.style.display = 'none';    
     }
-    // Display Follow button in profile page
+    // Hide Follow button if profile page is of current user
     let profile_selected = document.querySelector('#profile');
     if (viewpage === profile_selected.text) {
         follow_btn.style.display = 'none';    
     }
+    // Display and Trigger Follow/Unfollow button
+    let follow_btn = document.querySelector(`#profile_${viewpage} > .follow-btn`);
+    follow_btn.addEventListener('click', () => {
+        // Display
+        if(follow_btn.textContent === "Follow") {
+            follow_btn.innerHTML = "Unfollow";
+        } else {
+            follow_btn.innerHTML = "Follow"
+        }
+        // Trigger
+        follow(
+            follow_btn.textContent, //trigger_text
+            profile_selected.text, //main_user
+            viewpage// follow_user
+        );
+    })
 
     // Posts view
     fetch(`posts/${viewpage}`)
@@ -120,3 +127,14 @@ function show_content(viewpage) {
         })
     });
 }
+
+// Follow or Unfollow
+function follow(trigger_text, main_user, follow_user) {
+    if (trigger_text == "Follow") {
+        // PUT method  
+    } else {
+        // PUT method
+    }
+    
+}
+
