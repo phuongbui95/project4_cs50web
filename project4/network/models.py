@@ -3,11 +3,19 @@ from django.db import models
 
 
 class User(AbstractUser):
-    follower = models.ManyToManyField("self", related_name="main_follower", null=True)
     following = models.ManyToManyField("self", related_name="main_following", null=True)
+    follower = models.ManyToManyField("self", related_name="main_follower", null=True)
     def __str__(self):
         return self.username
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "follower": [self for self in self.follower.all()],
+            "following": [self for self in self.following.all()]
+        }
+    
 ##--- Additional models ---##
 # Post
 class Post(models.Model):

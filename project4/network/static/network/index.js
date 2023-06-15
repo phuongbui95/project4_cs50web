@@ -82,12 +82,13 @@ function show_content(viewpage) {
     }
     // Hide Follow button if profile page is of current user
     let profile_selected = document.querySelector('#profile');
-    if (viewpage === profile_selected.text) {
+    if (viewpage === profile_selected.textContent) {
         follow_btn.style.display = 'none';    
     }
     // Display and Trigger Follow/Unfollow button
     let follow_btn = document.querySelector(`#profile_${viewpage} > .follow-btn`);
     follow_btn.addEventListener('click', () => {
+        console.log("Clicked on Button");
         // Display
         if(follow_btn.textContent === "Follow") {
             follow_btn.innerHTML = "Unfollow";
@@ -97,7 +98,7 @@ function show_content(viewpage) {
         // Trigger
         follow(
             follow_btn.textContent, //trigger_text
-            profile_selected.text, //main_user
+            profile_selected.textContent, //main_user
             viewpage// follow_user
         );
     })
@@ -129,11 +130,33 @@ function show_content(viewpage) {
 }
 
 // Follow or Unfollow
-function follow(trigger_text, main_user, follow_user) {
+function follow(trigger_text, main_user, follow_user) { 
+    // Get data
+    // fetch(`/users/${main_user}`)
+    // .then(response => response.json())
+    // .then(data => {
+    //     if (trigger_text == "Follow") {
+    //         data.following.push(follow_user)
+    //     } else {
+    //         data.following.splice(data.following.indexOf(follow_user), 1);
+    //     }
+    // })
+
+    // udpate data
     if (trigger_text == "Follow") {
-        // PUT method  
+        fetch(`users/${main_user}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                following: follow_user
+            })
+          })
     } else {
-        // PUT method
+        fetch(`users/${main_user}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                following: "remove" + follow_user
+            })
+          })
     }
     
 }
