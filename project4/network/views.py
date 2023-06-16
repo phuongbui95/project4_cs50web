@@ -144,11 +144,16 @@ def follow(request, username):
     # Edit profile
     elif request.method == "PUT":
         data = json.loads(request.body)      
-        # To assign a value to a many-to-many field, you should use the set() method. 
-        profile.following.set(data["following"])
-        profile.follower.set(data["follower"])
+        # To assign a value to a many-to-many field, you should use the set() method.
+        following_users = data["following"]
+        for user in following_users:
+            profile.following.add(user)
+        follower_users = data["follower"]
+        for user in follower_users:
+            profile.follower.add(user)
         profile.save()
-        return HttpResponse(status=204)
+        # return HttpResponse(status=204)
+        return HttpResponse(profile)
 
     # Profile must be via GET or PUT
     else:

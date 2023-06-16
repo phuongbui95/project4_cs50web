@@ -68,7 +68,7 @@ function show_content(viewpage) {
     // Profile view
     const follow_div = document.createElement('div');
     follow_div.id = `profile_${viewpage}`;
-    follow_div.innerHTML = `<button class="follow-btn">Follow</button>
+    follow_div.innerHTML = `<button class="follow-btn">follow</button>
                             <div class="follower"><a href="#">Followers</a>: 0</div>
                             <div class="following"><a href="#">Following</a>: 0</div>
                             `;
@@ -80,27 +80,30 @@ function show_content(viewpage) {
     if (viewpage === "all" || viewpage === "following") {
         follow_div.style.display = 'none';    
     }
+
+    // Initialize follow_btn
+    let follow_btn = document.querySelector(`#profile_${viewpage} > .follow-btn`);
     // Hide Follow button if profile page is of current user
     let profile_selected = document.querySelector('#profile');
     if (viewpage === profile_selected.textContent) {
         follow_btn.style.display = 'none';    
     }
     // Display and Trigger Follow/Unfollow button
-    let follow_btn = document.querySelector(`#profile_${viewpage} > .follow-btn`);
     follow_btn.addEventListener('click', () => {
         console.log("Clicked on Button");
-        // Display
-        if(follow_btn.textContent === "Follow") {
-            follow_btn.innerHTML = "Unfollow";
-        } else {
-            follow_btn.innerHTML = "Follow"
-        }
         // Trigger
         follow(
             follow_btn.textContent, //trigger_text
             profile_selected.textContent, //main_user
             viewpage// follow_user
         );
+        // Change button text
+        if(follow_btn.textContent === "follow") { 
+            follow_btn.innerHTML = "unfollow";
+        } else {
+            follow_btn.innerHTML = "follow"
+        }
+        
     })
 
     // Posts view
@@ -130,33 +133,30 @@ function show_content(viewpage) {
 }
 
 // Follow or Unfollow
-function follow(trigger_text, main_user, follow_user) { 
-    // Get data
-    // fetch(`/users/${main_user}`)
-    // .then(response => response.json())
-    // .then(data => {
-    //     if (trigger_text == "Follow") {
-    //         data.following.push(follow_user)
-    //     } else {
-    //         data.following.splice(data.following.indexOf(follow_user), 1);
-    //     }
-    // })
-
+function follow(btn_text, main_user, follow_user) { 
     // udpate data
-    if (trigger_text == "Follow") {
+    if (btn_text == "follow") {
+        console.log(`test: ${btn_text}`);
+        console.log(`before: follow`);
+        console.log(`main_user: ${main_user}`);
+        console.log(`follow_user: ${follow_user}`);
         fetch(`users/${main_user}`, {
             method: 'PUT',
             body: JSON.stringify({
-                following: follow_user
+                following: `${follow_user}`
             })
           })
     } else {
-        fetch(`users/${main_user}`, {
-            method: 'PUT',
-            body: JSON.stringify({
-                following: "remove" + follow_user
-            })
-          })
+        console.log(`test: ${btn_text}`);
+        console.log(`before: unfollow`);
+        console.log(`main_user: ${main_user}`);
+        console.log(`follow_user: ${follow_user}`);
+        // fetch(`users/${main_user}`, {
+        //     method: 'PUT',
+        //     body: JSON.stringify({
+        //         following: follow_user
+        //     })
+        //   })
     }
     
 }

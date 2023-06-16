@@ -3,8 +3,8 @@ from django.db import models
 
 
 class User(AbstractUser):
-    following = models.ManyToManyField("self", related_name="main_following", null=True)
-    follower = models.ManyToManyField("self", related_name="main_follower", null=True)
+    following = models.ManyToManyField("self", related_name="main_following", symmetrical=False, blank=True)
+    # follower = models.ManyToManyField("self", related_name="main_follower", null=True)
     def __str__(self):
         return self.username
 
@@ -12,8 +12,9 @@ class User(AbstractUser):
         return {
             "id": self.id,
             "username": self.username,
-            "follower": [self for self in self.follower.all()],
-            "following": [self for self in self.following.all()]
+            "following": [self.username for self in self.following.all()]
+            # "follower": [self.username for self in self.follower.all()],
+            
         }
     
 ##--- Additional models ---##
