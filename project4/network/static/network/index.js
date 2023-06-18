@@ -124,7 +124,8 @@ function show_follow_and_posts(username) {
         follow_div.id = `profile_${username}`;
         console.log('following num: ',following_users.length);
         console.log('follower num: ',follower_users.length);
-        follow_div.innerHTML = `<button class="follow-btn">follow</button>
+        follow_div.innerHTML = `
+                            <button class="follow-btn">follow</button>
                             <div class="follower"><a href="#">Followers</a>: ${follower_users.length}</div>
                             <div class="following"><a href="#">Following</a>: ${following_users.length}</div>
                             `;
@@ -163,20 +164,34 @@ function show_follow_and_posts(username) {
     })
 }
 // Follow or Unfollow
-function follow_btn_click(trigger_text, follow_profile, current_profile) { 
+function follow_btn_click(trigger_text, user_followed, current_user) { 
+    // All the action is executed in Backend, just use Javascript to display content
     // udpate data
     if (trigger_text == "follow") {
         console.log(`====trigger: ${trigger_text}`);
         console.log(`before: follow`);
-        console.log(`follow_profile: ${follow_profile}`);
-        console.log(`current_profile: ${current_profile}`);
-        
+        console.log(`user_followed: ${user_followed}`);
+        console.log(`current_user: ${current_user}`);
+        // Send a POST request to API
+        fetch('/follow', {
+            method: 'POST',
+            body: JSON.stringify({
+                trigger_text: `${trigger_text}`,
+                user: `${current_user}`,
+                user_followed: `${user_followed}`
+            })
+        })
+        .then(response => response.json())
+        .then(result => {
+            // Print result
+            console.log(result);
+        });  
         
     } else {
         console.log(`====trigger: ${trigger_text}`);
         console.log(`before: unfollow`);
-        console.log(`follow_profile: ${follow_profile}`);
-        console.log(`current_profile: ${current_profile}`);
+        console.log(`user_followed: ${user_followed}`);
+        console.log(`current_user: ${current_user}`);
         
         // PUT method
     }

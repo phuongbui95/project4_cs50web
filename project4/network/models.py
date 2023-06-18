@@ -35,6 +35,10 @@ class Post(models.Model):
             "like_number": self.likeNum
         }
 
-
+# Follow
+class Follow(models.Model):
+    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="who_clicked_btn", null=True) 
+    user_followed = models.ForeignKey("User", on_delete=models.CASCADE, related_name="who_is_followed", null=True )
+    trigger_text = models.CharField(blank=True, max_length=10)
 
 # Like

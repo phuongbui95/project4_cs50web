@@ -129,31 +129,47 @@ def post(request, post_id):
         }, status=400)
 
 
-@csrf_exempt
 @login_required
-def follow(request, username):
-    # Query for requested profile
+def profile(request, username):
     try:
-        follow_profile = User.objects.get(username=username)
+        profile = User.objects.get(username=username)
     except User.DoesNotExist:
         return JsonResponse({"error": "User not found."}, status=404)
     
     # Return follow_profile contents
     if request.method == "GET":
-        return JsonResponse(follow_profile.serialize())
+        return JsonResponse(profile.serialize())
+
+    
+    else:
+        return JsonResponse({
+            "error": "Invalid profile"
+        }, status=400) 
+    
+
+@csrf_exempt
+@login_required
+def follow(request, username):
+    # # Get the users
+    # thor = User.objects.get(username='Thor')
+    # pb = User.objects.get(username='PB')
+
+    # # Add PB to Thor's following field
+    # thor.following.add(pb)
+    # thor.save()
         
     # Remove Follow Num
-    elif request.method == "POST":
+    if request.method == "POST":
         # Follow
 
         # Unfollow
         
         pass
 
-    # Profile must be via GET or PUT
+    # Profile must be via POST
     else:
         return JsonResponse({
-            "error": "GET or POST request required."
+            "error": "POST request required."
         }, status=400) 
 
     

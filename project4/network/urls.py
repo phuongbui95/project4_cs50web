@@ -13,5 +13,6 @@ urlpatterns = [
     path("posts", views.compose, name="compose"),
     path("posts/<int:post_id>", views.post, name="post"),
     path("posts/<str:viewpage>", views.viewpage, name="viewpage"),
-    path("profile/<str:username>", views.follow, name="follow")
+    path("profile/<str:username>", views.profile, name="profile"),
+    path("follow", views.follow, name="follow")
 ]
