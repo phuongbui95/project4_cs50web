@@ -50,7 +50,6 @@ function compose() {
 // Load customized DOM
 function load_view(viewpage) {
     console.log(`view: ${viewpage}`);
-    document.querySelector('#intro-view').style.display = 'none';
 
     // Show the view name
     let text = viewpage;
@@ -59,6 +58,7 @@ function load_view(viewpage) {
                                                             ${text.charAt(0).toUpperCase() + text.slice(1)}
                                                         </h3>`;
     
+    document.querySelector('#compose-view').style.display = 'block';
     // View content of page
     if (viewpage === "all") {
         show_all(viewpage);
@@ -71,21 +71,17 @@ function load_view(viewpage) {
 
 // Show all-post page
 function show_all(viewpage) {
-    document.querySelector('#compose-view').style.display = 'block';
     show_posts(viewpage);
 }
 
 // Show following page
 function show_following(viewpage) {
-    document.querySelector('#compose-view').style.display = 'block';
     show_posts(viewpage);
 }
 
 // Show profile page
 function show_profile(username) {
-    document.querySelector('#compose-view').style.display = 'block';
-    show_follow(username);
-    show_posts(username);
+    show_follow_and_posts(username); //make sure follow_div displayed First then posts_div
 }
 
 // Show Posts
@@ -98,7 +94,7 @@ function show_posts(viewpage) {
             const post_div = document.createElement('div');
             post_div.className = `post_${post.id}`;
             post_div.innerHTML = `
-                                <div class="sender_${post.sender}"><a href="#">${post.sender}</a></div>
+                                <div class="sender_${post.sender}"><a href="#">@${post.sender}</a></div>
                                 <div class="content">${post.content}</div>
                                 <div class="timestamp">${post.timestamp}</div>
                                 <button name="like" type="submit" class="btn btn-primary">Like</button>
@@ -118,16 +114,18 @@ function show_posts(viewpage) {
 }
 
 // Show Follow numbers
-function show_follow(username) {
-    fetch(`users/${username}`)
+function show_follow_and_posts(username) {
+    fetch(`profile/${username}`)
     .then(response => response.json())
     .then(user => {
         let following_users = user.following;
+        let follower_users = user.follower;
         const follow_div = document.createElement('div');
         follow_div.id = `profile_${username}`;
         console.log('following num: ',following_users.length);
+        console.log('follower num: ',follower_users.length);
         follow_div.innerHTML = `<button class="follow-btn">follow</button>
-                            <div class="follower"><a href="#">Followers</a>: 0</div>
+                            <div class="follower"><a href="#">Followers</a>: ${follower_users.length}</div>
                             <div class="following"><a href="#">Following</a>: ${following_users.length}</div>
                             `;
                             
@@ -135,16 +133,11 @@ function show_follow(username) {
             document.querySelector('#content-view').append(follow_div);
         }
     
-        // Hide Follow div if not profile page
-        // if (username === "all" || username === "following") {
-        //     follow_div.style.display = 'none';    
-        // }
-    
         // Initialize follow_btn
         let follow_btn = document.querySelector(`#profile_${username} > .follow-btn`);
         // Hide Follow button if profile page is of current user
-        let profile_selected = document.querySelector('#profile');
-        if (username === profile_selected.textContent) {
+        let current_profile = document.querySelector('#profile');
+        if (username === current_profile.textContent) {
             follow_btn.style.display = 'none';    
         }
         // Display and Trigger Follow/Unfollow button
@@ -153,8 +146,9 @@ function show_follow(username) {
             // Trigger
             follow_btn_click(
                 follow_btn.textContent, //trigger_text
-                profile_selected.textContent, //main_user
-                username// follow_user
+                username, // follow_profile
+                current_profile.textContent //current_profile
+                
             );
             // Change button text
             if(follow_btn.textContent === "follow") { 
@@ -164,23 +158,27 @@ function show_follow(username) {
             }
             
         })
+
+        show_posts(username);
     })
 }
 // Follow or Unfollow
-function follow_btn_click(btn_text, main_user, follow_user) { 
+function follow_btn_click(trigger_text, follow_profile, current_profile) { 
     // udpate data
-    if (btn_text == "follow") {
-        console.log(`test: ${btn_text}`);
+    if (trigger_text == "follow") {
+        console.log(`====trigger: ${trigger_text}`);
         console.log(`before: follow`);
-        console.log(`main_user: ${main_user}`);
-        console.log(`follow_user: ${follow_user}`);
-        // edit follow
+        console.log(`follow_profile: ${follow_profile}`);
+        console.log(`current_profile: ${current_profile}`);
+        
+        
     } else {
-        console.log(`test: ${btn_text}`);
+        console.log(`====trigger: ${trigger_text}`);
         console.log(`before: unfollow`);
-        console.log(`main_user: ${main_user}`);
-        console.log(`follow_user: ${follow_user}`);
-        // edit follow
+        console.log(`follow_profile: ${follow_profile}`);
+        console.log(`current_profile: ${current_profile}`);
+        
+        // PUT method
     }
     
 }

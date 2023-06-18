@@ -111,7 +111,7 @@ def viewpage(request, viewpage):
 def post(request, post_id):
     # Query for requested post
     try:
-        post = Post.objects.get(sender=request.user, pk=post_id)
+        post = Post.objects.get(pk=post_id)
     except Post.DoesNotExist:
         return JsonResponse({"error": "Post not found."}, status=404)
     
@@ -128,37 +128,32 @@ def post(request, post_id):
             "error": "GET or PUT request required."
         }, status=400)
 
+
 @csrf_exempt
 @login_required
 def follow(request, username):
     # Query for requested profile
     try:
-        profile = User.objects.get(username=username)
+        follow_profile = User.objects.get(username=username)
     except User.DoesNotExist:
         return JsonResponse({"error": "User not found."}, status=404)
     
-    # Return profile contents
+    # Return follow_profile contents
     if request.method == "GET":
-        return JsonResponse(profile.serialize())
+        return JsonResponse(follow_profile.serialize())
         
-    # Edit profile
-    elif request.method == "PUT":
-        data = json.loads(request.body)      
-        # To assign a value to a many-to-many field, you should use the set() method.
-        following_users = data["following"]
-        for user in following_users:
-            profile.following.add(user)
-        follower_users = data["follower"]
-        for user in follower_users:
-            profile.follower.add(user)
-        profile.save()
-        # return HttpResponse(status=204)
-        return HttpResponse(profile)
+    # Remove Follow Num
+    elif request.method == "POST":
+        # Follow
+
+        # Unfollow
+        
+        pass
 
     # Profile must be via GET or PUT
     else:
         return JsonResponse({
-            "error": "GET or PUT request required."
+            "error": "GET or POST request required."
         }, status=400) 
 
     
