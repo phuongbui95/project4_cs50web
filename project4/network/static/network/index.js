@@ -47,6 +47,7 @@ function compose() {
     
 }
 
+// Load customized DOM
 function load_view(viewpage) {
     console.log(`view: ${viewpage}`);
     document.querySelector('#intro-view').style.display = 'none';
@@ -59,54 +60,36 @@ function load_view(viewpage) {
                                                         </h3>`;
     
     // View content of page
-    show_content(viewpage);
+    if (viewpage === "all") {
+        show_all(viewpage);
+    } else if (viewpage === "following") {
+        show_following(viewpage);
+    } else {
+        show_profile(viewpage);
+    }
 }
 
-// Show viewpage
-function show_content(viewpage) {
+// Show all-post page
+function show_all(viewpage) {
     document.querySelector('#compose-view').style.display = 'block';
-    // Profile view
-    const follow_div = document.createElement('div');
-    follow_div.id = `profile_${viewpage}`;
-    follow_div.innerHTML = `<button class="follow-btn">follow</button>
-                            <div class="follower"><a href="#">Followers</a>: 0</div>
-                            <div class="following"><a href="#">Following</a>: 0</div>
-                            `;
-    if (!document.querySelector(`#content-view > div#profile_${viewpage}`)) {
-        document.querySelector('#content-view').append(follow_div);
-    }
+    show_posts(viewpage);
+}
 
-    // Hide Follow div if not profile page
-    if (viewpage === "all" || viewpage === "following") {
-        follow_div.style.display = 'none';    
-    }
+// Show following page
+function show_following(viewpage) {
+    document.querySelector('#compose-view').style.display = 'block';
+    show_posts(viewpage);
+}
 
-    // Initialize follow_btn
-    let follow_btn = document.querySelector(`#profile_${viewpage} > .follow-btn`);
-    // Hide Follow button if profile page is of current user
-    let profile_selected = document.querySelector('#profile');
-    if (viewpage === profile_selected.textContent) {
-        follow_btn.style.display = 'none';    
-    }
-    // Display and Trigger Follow/Unfollow button
-    follow_btn.addEventListener('click', () => {
-        console.log("Clicked on Button");
-        // Trigger
-        follow(
-            follow_btn.textContent, //trigger_text
-            profile_selected.textContent, //main_user
-            viewpage// follow_user
-        );
-        // Change button text
-        if(follow_btn.textContent === "follow") { 
-            follow_btn.innerHTML = "unfollow";
-        } else {
-            follow_btn.innerHTML = "follow"
-        }
-        
-    })
+// Show profile page
+function show_profile(username) {
+    document.querySelector('#compose-view').style.display = 'block';
+    show_follow(username);
+    show_posts(username);
+}
 
-    // Posts view
+// Show Posts
+function show_posts(viewpage) {
     fetch(`posts/${viewpage}`)
     .then(response => response.json())
     .then(posts => {
@@ -114,10 +97,12 @@ function show_content(viewpage) {
         posts.forEach(post => {
             const post_div = document.createElement('div');
             post_div.className = `post_${post.id}`;
-            post_div.innerHTML = `<div class="sender_${post.sender}"><a href="#">${post.sender}</a></div>
+            post_div.innerHTML = `
+                                <div class="sender_${post.sender}"><a href="#">${post.sender}</a></div>
                                 <div class="content">${post.content}</div>
                                 <div class="timestamp">${post.timestamp}</div>
-                                <button name="like" type="submit" class="btn btn-primary">Like</button>`;
+                                <button name="like" type="submit" class="btn btn-primary">Like</button>
+                                `;
             post_div.style.border = '1px solid black';
             document.querySelector('#content-view').append(post_div);
 
@@ -132,31 +117,70 @@ function show_content(viewpage) {
     });
 }
 
+// Show Follow numbers
+function show_follow(username) {
+    fetch(`users/${username}`)
+    .then(response => response.json())
+    .then(user => {
+        let following_users = user.following;
+        const follow_div = document.createElement('div');
+        follow_div.id = `profile_${username}`;
+        console.log('following num: ',following_users.length);
+        follow_div.innerHTML = `<button class="follow-btn">follow</button>
+                            <div class="follower"><a href="#">Followers</a>: 0</div>
+                            <div class="following"><a href="#">Following</a>: ${following_users.length}</div>
+                            `;
+                            
+        if (!document.querySelector(`#content-view > div#profile_${username}`)) {
+            document.querySelector('#content-view').append(follow_div);
+        }
+    
+        // Hide Follow div if not profile page
+        // if (username === "all" || username === "following") {
+        //     follow_div.style.display = 'none';    
+        // }
+    
+        // Initialize follow_btn
+        let follow_btn = document.querySelector(`#profile_${username} > .follow-btn`);
+        // Hide Follow button if profile page is of current user
+        let profile_selected = document.querySelector('#profile');
+        if (username === profile_selected.textContent) {
+            follow_btn.style.display = 'none';    
+        }
+        // Display and Trigger Follow/Unfollow button
+        follow_btn.addEventListener('click', () => {
+            console.log("Clicked on Button");
+            // Trigger
+            follow_btn_click(
+                follow_btn.textContent, //trigger_text
+                profile_selected.textContent, //main_user
+                username// follow_user
+            );
+            // Change button text
+            if(follow_btn.textContent === "follow") { 
+                follow_btn.innerHTML = "unfollow";
+            } else {
+                follow_btn.innerHTML = "follow"
+            }
+            
+        })
+    })
+}
 // Follow or Unfollow
-function follow(btn_text, main_user, follow_user) { 
+function follow_btn_click(btn_text, main_user, follow_user) { 
     // udpate data
     if (btn_text == "follow") {
         console.log(`test: ${btn_text}`);
         console.log(`before: follow`);
         console.log(`main_user: ${main_user}`);
         console.log(`follow_user: ${follow_user}`);
-        fetch(`users/${main_user}`, {
-            method: 'PUT',
-            body: JSON.stringify({
-                following: `${follow_user}`
-            })
-          })
+        // edit follow
     } else {
         console.log(`test: ${btn_text}`);
         console.log(`before: unfollow`);
         console.log(`main_user: ${main_user}`);
         console.log(`follow_user: ${follow_user}`);
-        // fetch(`users/${main_user}`, {
-        //     method: 'PUT',
-        //     body: JSON.stringify({
-        //         following: follow_user
-        //     })
-        //   })
+        // edit follow
     }
     
 }
