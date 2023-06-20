@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 import time
-from .models import User, Post, Follow
+from .models import User, Post #, Follow
 
 
 def index(request):
