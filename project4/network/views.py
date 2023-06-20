@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 import time
-from .models import User, Post
+from .models import User, Post, Follow
 
 
 def index(request):
@@ -138,9 +138,7 @@ def profile(request, username):
     
     # Return follow_profile contents
     if request.method == "GET":
-        return JsonResponse(profile.serialize())
-
-    
+        return JsonResponse(profile.serialize())   
     else:
         return JsonResponse({
             "error": "Invalid profile"
@@ -149,7 +147,7 @@ def profile(request, username):
 
 @csrf_exempt
 @login_required
-def follow(request, username):
+def follow(request):
     # # Get the users
     # thor = User.objects.get(username='Thor')
     # pb = User.objects.get(username='PB')
@@ -158,18 +156,37 @@ def follow(request, username):
     # thor.following.add(pb)
     # thor.save()
         
-    # Remove Follow Num
-    if request.method == "POST":
-        # Follow
 
-        # Unfollow
-        
-        pass
+    # Clicking follow-btn will trigger a POST request
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required"}, status=400)
+    
+    # Get content of post
+    data = json.loads(request.body)
+    trigger_text = data.get("trigger_text", "")
+    user = data.get("user", "")
+    user_followed = data.get("user_followed", "")
 
-    # Profile must be via POST
-    else:
-        return JsonResponse({
-            "error": "POST request required."
-        }, status=400) 
-
+    who_is_followed = User.objects.get(username = user_followed)
+    who_clicked_follow = User.objects.get(username = user)
+    # Follow
+    if trigger_text == "follow":
+        who_is_followed.follower.add(who_clicked_follow)
+        who_clicked_follow.following.add(who_is_followed)    
+    # Unfollow
+    elif trigger_text == "unfollow":
+        who_is_followed.follower.remove(who_clicked_follow)
+        who_clicked_follow.following.remove(who_is_followed)    
+    
+    who_is_followed.save()
+    who_clicked_follow.save()
+    
+    # follow = Follow(
+    #     user = who_clicked_follow,
+    #     user_followed = who_is_followed,
+    #     trigger_text = trigger_text
+    # )
+    # follow.save()
+ 
+    return JsonResponse({"message": "Post sent successfully."}, status=201)
     

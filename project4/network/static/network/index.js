@@ -80,8 +80,8 @@ function show_following(viewpage) {
 }
 
 // Show profile page
-function show_profile(username) {
-    show_follow_and_posts(username); //make sure follow_div displayed First then posts_div
+function show_profile(viewpage) {
+    show_follow_and_posts(viewpage); //make sure follow_div displayed First then posts_div
 }
 
 // Show Posts
@@ -115,17 +115,22 @@ function show_posts(viewpage) {
 
 // Show Follow numbers
 function show_follow_and_posts(username) {
-    fetch(`profile/${username}`)
+    fetch(`profiles/${username}`)
     .then(response => response.json())
     .then(user => {
+        let current_user_div = document.querySelector('#profile');
         let following_users = user.following;
         let follower_users = user.follower;
+        let follow_btn_text = 'follow';
+        if(current_user_div.textContent in follower_users) {
+            follow_btn_text = 'unfollow';
+        }
         const follow_div = document.createElement('div');
         follow_div.id = `profile_${username}`;
         console.log('following num: ',following_users.length);
         console.log('follower num: ',follower_users.length);
         follow_div.innerHTML = `
-                            <button class="follow-btn">follow</button>
+                            <button class="follow-btn">${follow_btn_text}</button>
                             <div class="follower"><a href="#">Followers</a>: ${follower_users.length}</div>
                             <div class="following"><a href="#">Following</a>: ${following_users.length}</div>
                             `;
@@ -137,8 +142,7 @@ function show_follow_and_posts(username) {
         // Initialize follow_btn
         let follow_btn = document.querySelector(`#profile_${username} > .follow-btn`);
         // Hide Follow button if profile page is of current user
-        let current_profile = document.querySelector('#profile');
-        if (username === current_profile.textContent) {
+        if (username === current_user_div.textContent) {
             follow_btn.style.display = 'none';    
         }
         // Display and Trigger Follow/Unfollow button
@@ -146,10 +150,9 @@ function show_follow_and_posts(username) {
             console.log("Clicked on Button");
             // Trigger
             follow_btn_click(
-                follow_btn.textContent, //trigger_text
-                username, // follow_profile
-                current_profile.textContent //current_profile
-                
+                current_user_div.textContent, //current_user
+                username, // user_followed
+                follow_btn.textContent //trigger_text
             );
             // Change button text
             if(follow_btn.textContent === "follow") { 
@@ -164,37 +167,22 @@ function show_follow_and_posts(username) {
     })
 }
 // Follow or Unfollow
-function follow_btn_click(trigger_text, user_followed, current_user) { 
-    // All the action is executed in Backend, just use Javascript to display content
-    // udpate data
-    if (trigger_text == "follow") {
-        console.log(`====trigger: ${trigger_text}`);
-        console.log(`before: follow`);
-        console.log(`user_followed: ${user_followed}`);
-        console.log(`current_user: ${current_user}`);
-        // Send a POST request to API
-        fetch('/follow', {
-            method: 'POST',
-            body: JSON.stringify({
-                trigger_text: `${trigger_text}`,
-                user: `${current_user}`,
-                user_followed: `${user_followed}`
-            })
+function follow_btn_click(current_user, user_followed, trigger_text) { 
+    // Send a POST request to API
+    fetch('/follow', {
+        method: 'POST',
+        body: JSON.stringify({
+            user: `${current_user}`,
+            user_followed: `${user_followed}`,
+            trigger_text: `${trigger_text}`
         })
-        .then(response => response.json())
-        .then(result => {
-            // Print result
-            console.log(result);
-        });  
-        
-    } else {
-        console.log(`====trigger: ${trigger_text}`);
-        console.log(`before: unfollow`);
-        console.log(`user_followed: ${user_followed}`);
-        console.log(`current_user: ${current_user}`);
-        
-        // PUT method
-    }
+    })
+    .then(response => response.json())
+    .then(result => {
+        // Print result
+        console.log(`POST: ${result}`);
+    });  
+    
     
 }
 
