@@ -12,9 +12,9 @@ class UserAdmin(admin.ModelAdmin):
                     ) #present a ManyToManyField in Django Admin Interface
     
     def get_following(self, obj):    
-        return "\n".join([str(b) for b in obj.following.all()])
+        return " ".join([str(b) for b in obj.following.all()])
     def get_follower(self, obj):    
-        return "\n".join([str(b) for b in obj.follower.all()])
+        return " ".join([str(b) for b in obj.follower.all()])
 
     get_following.short_description = 'Following'
     get_follower.short_description = 'Follower'

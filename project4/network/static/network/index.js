@@ -134,7 +134,7 @@ function show_follow_and_posts(username) {
                             <div class="follower"><a href="#">Followers</a>: ${follower_users.length}</div>
                             <div class="following"><a href="#">Following</a>: ${following_users.length}</div>
                             `;
-                            
+        // If #content-view of profile does not exist, add it                            
         if (!document.querySelector(`#content-view > div#profile_${username}`)) {
             document.querySelector('#content-view').append(follow_div);
         }
@@ -160,7 +160,9 @@ function show_follow_and_posts(username) {
             } else {
                 follow_btn.innerHTML = "follow"
             }
-            
+
+            alert(`${current_user_div.textContent} followed ${username}. Back to home-page`);
+            load_view('all');
         })
 
         show_posts(username);
