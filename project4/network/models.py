@@ -20,7 +20,6 @@ class User(AbstractUser):
 ##--- Additional models ---##
 # Post
 class Post(models.Model):
-    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="posts", null=True) # key to connect with User model
     sender = models.ForeignKey("User", on_delete=models.PROTECT, related_name="posts_sent", null=True ) #PROTECT, not CASCADE
     content = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
