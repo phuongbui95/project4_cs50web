@@ -94,7 +94,9 @@ def viewpage(request, viewpage):
     if viewpage == "all":
         posts = Post.objects.all()
     elif viewpage == "following":
-        return JsonResponse({"message": "TBA"}, status=201)
+        user = User.objects.get(username=request.user)
+        following = user.following.all()
+        posts = Post.objects.filter(sender__in=following) # Django lookup __in
     elif viewpage == "profile":
         posts = Post.objects.filter(sender=request.user)
     elif User.objects.get(username=viewpage): #cannot use this line out of the condition statment => it will break Json

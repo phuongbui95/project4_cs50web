@@ -121,8 +121,10 @@ function show_follow_and_posts(username) {
         let current_user_div = document.querySelector('#profile');
         let following_users = user.following;
         let follower_users = user.follower;
+        
+
         let follow_btn_text = 'follow';
-        if(current_user_div.textContent in follower_users) {
+        if(follower_users.includes(current_user_div.textContent)) {
             follow_btn_text = 'unfollow';
         }
         const follow_div = document.createElement('div');
@@ -161,7 +163,7 @@ function show_follow_and_posts(username) {
                 follow_btn.innerHTML = "follow"
             }
 
-            alert(`${current_user_div.textContent} followed ${username}. Back to home-page`);
+            alert(`${current_user_div.textContent} ${follow_btn_text}ed ${username}. Back to home-page`);
             load_view('all');
         })
 
