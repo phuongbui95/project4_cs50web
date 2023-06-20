@@ -50,15 +50,15 @@ function compose() {
 // Load customized DOM
 function load_view(viewpage) {
     console.log(`view: ${viewpage}`);
-
+    document.querySelector('#compose-view').style.display = 'block';
     // Show the view name
     let text = viewpage;
     if (viewpage === "all") text = "all post";
-    document.querySelector('#content-view').innerHTML = `<h3>
-                                                            ${text.charAt(0).toUpperCase() + text.slice(1)}
-                                                        </h3>`;
+    // document.querySelector('#content-view').innerHTML = `<h3>
+    //                                                         ${text.charAt(0).toUpperCase() + text.slice(1)}
+    //                                                     </h3>`;
+    document.querySelector('#content-view > .title').innerHTML = `${text.charAt(0).toUpperCase() + text.slice(1)}`;
     
-    document.querySelector('#compose-view').style.display = 'block';
     // View content of page
     if (viewpage === "all") {
         show_all(viewpage);
@@ -89,8 +89,18 @@ function show_posts(viewpage) {
     fetch(`posts/${viewpage}`)
     .then(response => response.json())
     .then(posts => {
-        console.log(posts);
-        posts.forEach(post => {
+        console.log(`${Math.ceil(posts.length/10)} pages`);
+        let page_num = 1;
+        // Paginator
+        // document.querySelector(`#content-view > div.post_${post.id} > div.sender_${post.sender} > a`)
+        //         .addEventListener('click', () => {
+        //             console.log(`Clicked on ${post.sender}`);
+        //             load_view(`${post.sender}`);
+        //         })
+        body > div > nav > ul > li.page-item.previous
+        
+        posts_per_page = posts.slice(page_num*10-10,page_num*10);
+        posts_per_page.forEach(post => {
             const post_div = document.createElement('div');
             post_div.className = `post_${post.id}`;
             post_div.innerHTML = `
@@ -186,7 +196,10 @@ function follow_btn_click(current_user, user_followed, trigger_text) {
         // Print result
         console.log(`POST: ${result}`);
     });  
-    
-    
+}
+
+// Pagination
+function paginator(trigger_text) {
+
 }
 

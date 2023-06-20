@@ -9,8 +9,8 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
-import time
-from .models import User, Post #, Follow
+from .models import User, Post
+from django.core.paginator import Paginator
 
 
 def index(request):
@@ -89,10 +89,12 @@ def compose(request):
 
     return JsonResponse({"message": "Post sent successfully."}, status=201)
 
+# def viewpage(request, viewpage, page_number=1):
 def viewpage(request, viewpage):
     # Viewpage's conditions
     if viewpage == "all":
         posts = Post.objects.all()
+
     elif viewpage == "following":
         user = User.objects.get(username=request.user)
         following = user.following.all()
@@ -105,7 +107,9 @@ def viewpage(request, viewpage):
         return JsonResponse({"message": "Invalid viewpage"}, status=400)
     
     # Return posts in reverse chronological order
-    posts = posts.order_by("-timestamp").all()
+    # total_pages = posts.count()/10 # 10 posts per display
+    posts = posts.order_by("-timestamp").all() #[(page_number*10-9):(page_number*10)] # show 10 posts per display
+   
     return JsonResponse([post.serialize() for post in posts], safe=False)
 
 @csrf_exempt
@@ -150,15 +154,6 @@ def profile(request, username):
 @csrf_exempt
 @login_required
 def follow(request):
-    # # Get the users
-    # thor = User.objects.get(username='Thor')
-    # pb = User.objects.get(username='PB')
-
-    # # Add PB to Thor's following field
-    # thor.following.add(pb)
-    # thor.save()
-        
-
     # Clicking follow-btn will trigger a POST request
     if request.method != "POST":
         return JsonResponse({"error": "POST request required"}, status=400)
@@ -182,13 +177,6 @@ def follow(request):
     
     who_is_followed.save()
     who_clicked_follow.save()
-    
-    # follow = Follow(
-    #     user = who_clicked_follow,
-    #     user_followed = who_is_followed,
-    #     trigger_text = trigger_text
-    # )
-    # follow.save()
  
     return JsonResponse({"message": "Post sent successfully."}, status=201)
     
