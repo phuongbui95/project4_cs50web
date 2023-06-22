@@ -99,16 +99,18 @@ def viewpage(request, viewpage):
         user = User.objects.get(username=request.user)
         following = user.following.all()
         posts = Post.objects.filter(sender__in=following) # Django lookup __in
+
     elif viewpage == "profile":
         posts = Post.objects.filter(sender=request.user)
+
     elif User.objects.get(username=viewpage): #cannot use this line out of the condition statment => it will break Json
         posts = Post.objects.filter(sender=User.objects.get(username=viewpage))
+        
     else:
         return JsonResponse({"message": "Invalid viewpage"}, status=400)
     
     # Return posts in reverse chronological order
-    # total_pages = posts.count()/10 # 10 posts per display
-    posts = posts.order_by("-timestamp").all() #[(page_number*10-9):(page_number*10)] # show 10 posts per display
+    posts = posts.order_by("-timestamp").all()
    
     return JsonResponse([post.serialize() for post in posts], safe=False)
 

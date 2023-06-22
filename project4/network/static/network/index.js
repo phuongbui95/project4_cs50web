@@ -54,29 +54,17 @@ function load_view(viewpage) {
     // Show the view name
     let text = viewpage;
     if (viewpage === "all") text = "all post";
-    // document.querySelector('#content-view').innerHTML = `<h3>
-    //                                                         ${text.charAt(0).toUpperCase() + text.slice(1)}
-    //                                                     </h3>`;
-    document.querySelector('#content-view > .title').innerHTML = `${text.charAt(0).toUpperCase() + text.slice(1)}`;
+    document.querySelector('#content-view').innerHTML = `<h3>
+                                                            ${text.charAt(0).toUpperCase() + text.slice(1)}
+                                                        </h3>`;
+    
     
     // View content of page
-    if (viewpage === "all") {
-        show_all(viewpage);
-    } else if (viewpage === "following") {
-        show_following(viewpage);
+    if (viewpage === "all" || viewpage === "following") {
+        show_posts(viewpage);
     } else {
         show_profile(viewpage);
     }
-}
-
-// Show all-post page
-function show_all(viewpage) {
-    show_posts(viewpage);
-}
-
-// Show following page
-function show_following(viewpage) {
-    show_posts(viewpage);
 }
 
 // Show profile page
@@ -89,18 +77,7 @@ function show_posts(viewpage) {
     fetch(`posts/${viewpage}`)
     .then(response => response.json())
     .then(posts => {
-        console.log(`${Math.ceil(posts.length/10)} pages`);
-        let page_num = 1;
-        // Paginator
-        // document.querySelector(`#content-view > div.post_${post.id} > div.sender_${post.sender} > a`)
-        //         .addEventListener('click', () => {
-        //             console.log(`Clicked on ${post.sender}`);
-        //             load_view(`${post.sender}`);
-        //         })
-        body > div > nav > ul > li.page-item.previous
-        
-        posts_per_page = posts.slice(page_num*10-10,page_num*10);
-        posts_per_page.forEach(post => {
+        posts.forEach(post => {
             const post_div = document.createElement('div');
             post_div.className = `post_${post.id}`;
             post_div.innerHTML = `
@@ -120,6 +97,31 @@ function show_posts(viewpage) {
                     })
             
         })
+
+        // let total_pages = Math.ceil(posts.length/10); 
+        // console.log(`${total_pages} pages`);
+        // let page_num = 1;
+        // posts_per_page = posts.slice(page_num*10-10,page_num*10);
+        // posts_per_page.forEach(post => {
+        //     const post_div = document.createElement('div');
+        //     post_div.className = `post_${post.id}`;
+        //     post_div.innerHTML = `
+        //                         <div class="sender_${post.sender}"><a href="#">@${post.sender}</a></div>
+        //                         <div class="content">${post.content}</div>
+        //                         <div class="timestamp">${post.timestamp}</div>
+        //                         <button name="like" type="submit" class="btn btn-primary">Like</button>
+        //                         `;
+        //     post_div.style.border = '1px solid black';
+        //     document.querySelector('#content-view').append(post_div);
+
+        //     //view profile
+        //     document.querySelector(`#content-view > div.post_${post.id} > div.sender_${post.sender} > a`)
+        //             .addEventListener('click', () => {
+        //                 console.log(`Clicked on ${post.sender}`);
+        //                 load_view(`${post.sender}`);
+        //             })
+            
+        // })
     });
 }
 
@@ -199,7 +201,49 @@ function follow_btn_click(current_user, user_followed, trigger_text) {
 }
 
 // Pagination
-function paginator(trigger_text) {
+function show_pagination(viewpage) {
+    let pagination = `
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination d-flex justify-content-center">
+                            <li class="page-item previous"><a class="page-link" href="#">Previous</a></li>
+                            <li class="page-item" id="page-num" hidden>1</li>
+                            <li class="page-item next"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                    </nav>
+                    `
+    // let previous_btn = document.querySelector('body > div > nav > ul > li.page-item.previous');
+    // let next_btn = document.querySelector('body > div > nav > ul > li.page-item.next');
+    // // Paginator
+    // previous_btn.addEventListener('click', () => {
+    //             console.log(`Clicked on Previous`);
+    //             paginator('previous', total_pages, viewpage);
+    //         })
+    
+    // next_btn.addEventListener('click', () => {
+    //             console.log(`Clicked on Next`);
+    //             paginator('next', total_pages, viewpage);
+    //         })
+    
+    // Check page num
+    // let page_num = document.querySelector('#page-num').innerHTML;
+    // console.log(`current page_num= ${page_num}`);
+}
 
+function paginator(trigger_text, total_pages, viewpage) {
+    let page_num = document.querySelector('#page-num').innerHTML;    
+    if(trigger_text === 'previous') {
+        if(parseInt(page_num) === 1) {
+            alert('No less pages');
+            return page_num;
+        };
+        page_num = parseInt(page_num)-1;
+    } else {
+        if(parseInt(page_num) === total_pages) {
+            alert('No more pages');
+            return page_num;
+        }
+        page_num = parseInt(page_num)+1;
+    }
+    return document.querySelector('#page-num').innerHTML = page_num;
 }
 
