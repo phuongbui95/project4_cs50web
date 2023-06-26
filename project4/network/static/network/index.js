@@ -128,26 +128,25 @@ function show_posts(viewpage, page=1) {
             console.log(`page = ${page}`);
             if(page_num === page) {
                 page_div.style.display = 'block';
+                // Add paginator if it does not exist
+                if(!document.querySelector(`#paginator_${viewpage}_page_${page_num}`)) {
+                    const paginator_div = document.createElement('div');
+                    paginator_div.id = `paginator_${viewpage}_page_${page_num}`;
+                    paginator_div.innerHTML = `
+                                                <nav aria-label="Page navigation example">
+                                                    <ul class="pagination d-flex justify-content-center">
+                                                        <li class="page-item previous"><a class="page-link" href="#">Previous</a></li>
+                                                        <li class="page-item page-num"><a class="page-link" href="#">${page_num}</a></li>
+                                                        <li class="page-item next"><a class="page-link" href="#">Next</a></li>
+                                                    </ul>
+                                                </nav>
+                                            `;    
+                    // document.querySelector('#content-view > div').append(paginator_div);
+                    page_div.append(paginator_div);
+                };
             } else {
                 page_div.style.display = 'none';
             }
-            
-            // Add paginator if it does not exist
-            if(!document.querySelector('#paginator')) {
-                const paginator_div = document.createElement('div');
-                paginator_div.id = `paginator_${viewpage}_page_${page_num}`;
-                paginator_div.innerHTML = `
-                                            <nav aria-label="Page navigation example">
-                                                <ul class="pagination d-flex justify-content-center">
-                                                    <li class="page-item previous"><a class="page-link" href="#">Previous</a></li>
-                                                    <li class="page-item page-num"><a class="page-link" href="#">${page_num}</a></li>
-                                                    <li class="page-item next"><a class="page-link" href="#">Next</a></li>
-                                                </ul>
-                                            </nav>
-                                        `;    
-                // document.querySelector('#content-view > div').append(paginator_div);
-                page_div.append(paginator_div);
-            };
         }
    
         // Button Listener     
@@ -248,13 +247,17 @@ function paginator(trigger_text, viewpage, total_pages, page_num) {
     if(trigger_text === 'previous') {
         if(inner_content === 1) {
             alert('No less pages');
-        };
-        selected_page_tag.innerHTML = inner_content - 1;
+            return;
+        } else {
+            selected_page_tag.innerHTML = inner_content - 1;
+        }
     } else {
         if(inner_content === total_pages) {
             alert('No more pages');
+            return;
+        } else {
+            selected_page_tag.innerHTML = inner_content + 1;
         }
-        selected_page_tag.innerHTML = inner_content + 1;
     }
 
     let new_page = parseInt(selected_page_tag.innerHTML);
