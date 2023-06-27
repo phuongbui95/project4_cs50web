@@ -79,7 +79,7 @@ function show_posts(viewpage, page=1) {
     .then(posts => {
         let total_pages = Math.ceil(posts.length/10); 
         console.log(`${total_pages} pages`);
-
+        console.log(`page = ${page}`);
         // Pagination
         for (let page_num = 1; page_num <= total_pages; page_num++) {
             //=== Page num level ====//
@@ -91,13 +91,13 @@ function show_posts(viewpage, page=1) {
                 document.querySelector('#content-view').append(page_div);    
             }
             page_div = document.querySelector(`#content-view #${viewpage}_page_${page_num}`);
-            console.log(`page_div: ${page_div}`);
+            // console.log(`page_div: ${page_div}`);
 
             //=== Posts per page level ====//
             // content of page container
             posts_per_page = posts.slice(page_num*10-10,page_num*10);
             posts_per_page.forEach(post => {
-                console.log(`page_div: ${page_div}`);
+                // console.log(`page_div: ${page_div}`);
                 if(!document.querySelector(`#${viewpage}_page_${page_num} > div.post_${post.id}`)) {
                     const post_div = document.createElement('div');
                     post_div.className = `post_${post.id}`;
@@ -123,43 +123,41 @@ function show_posts(viewpage, page=1) {
                 
             })
 
-            //== Page num level ==//
             // Display posts' container
-            console.log(`page = ${page}`);
             if(page_num === page) {
                 page_div.style.display = 'block';
-                // Add paginator if it does not exist
-                if(!document.querySelector(`#paginator_${viewpage}_page_${page_num}`)) {
-                    const paginator_div = document.createElement('div');
-                    paginator_div.id = `paginator_${viewpage}_page_${page_num}`;
-                    paginator_div.innerHTML = `
-                                                <nav aria-label="Page navigation example">
-                                                    <ul class="pagination d-flex justify-content-center">
-                                                        <li class="page-item previous"><a class="page-link" href="#">Previous</a></li>
-                                                        <li class="page-item page-num"><a class="page-link" href="#">${page_num}</a></li>
-                                                        <li class="page-item next"><a class="page-link" href="#">Next</a></li>
-                                                    </ul>
-                                                </nav>
-                                            `;    
-                    // document.querySelector('#content-view > div').append(paginator_div);
-                    page_div.append(paginator_div);
-                };
             } else {
                 page_div.style.display = 'none';
             }
         }
-   
+        
+        // Add paginator if it does not exist
+        if(!document.querySelector(`#paginator`)) {
+            const paginator_div = document.createElement('div');
+            paginator_div.id = `paginator`;
+            paginator_div.innerHTML = `
+                                        <nav aria-label="Page navigation example">
+                                            <ul class="pagination d-flex justify-content-center">
+                                                <li class="page-item previous"><a class="page-link" href="#">Previous</a></li>
+                                                <li class="page-item page-num"><a class="page-link" href="#">${page}</a></li>
+                                                <li class="page-item next"><a class="page-link" href="#">Next</a></li>
+                                            </ul>
+                                        </nav>
+                                    `;    
+            document.querySelector('#content-view').append(paginator_div);
+        };
+
         // Button Listener     
-        let previous_btn = document.querySelector(`#paginator_${viewpage}_page_${page} > nav > ul > li.page-item.previous > a`);
-        let next_btn = document.querySelector(`#paginator_${viewpage}_page_${page} > nav > ul > li.page-item.next > a`);
+        let previous_btn = document.querySelector(`#paginator > nav > ul > li.page-item.previous > a`);
+        let next_btn = document.querySelector(`#paginator > nav > ul > li.page-item.next > a`);
         previous_btn.addEventListener('click', () => {
                     console.log(`Clicked on Previous`);
-                    paginator('previous', viewpage, total_pages, page);
+                    paginator('previous', total_pages, viewpage);
                 })
         
         next_btn.addEventListener('click', () => {
                     console.log(`Clicked on Next`);
-                    paginator('next', viewpage, total_pages, page);
+                    paginator('next', total_pages, viewpage);
                 })
     });
 }
@@ -239,32 +237,42 @@ function follow_btn_click(current_user, user_followed, trigger_text) {
     });  
 }
 
-function paginator(trigger_text, viewpage, total_pages, page_num) {
-    let selected_page_tag = document.querySelector(`#paginator_${viewpage}_page_${page_num} > nav > ul > li.page-item.page-num > a`);
-    let inner_content = parseInt(selected_page_tag.innerHTML);
-    console.log(`Before switched to new page= ${inner_content}`);
+// Hide and Show block of code
+function paginator(trigger_text, total_pages, viewpage) {
+    let selected_page_tag = document.querySelector(`#paginator > nav > ul > li.page-item.page-num > a`);
+    let show_page = parseInt(selected_page_tag.innerHTML);
+    console.log(`Show page= ${show_page}`);
+    console.log(`Total pages= ${total_pages}`);
+    console.log(`Before switched => page= ${show_page}`);
 
-    if(trigger_text === 'previous') {
-        if(inner_content === 1) {
-            alert('No less pages');
-            return;
-        } else {
-            selected_page_tag.innerHTML = inner_content - 1;
+    // Before
+    if(show_page>=1 && show_page<=total_pages) {
+        if(trigger_text === 'previous') {
+            show_page = show_page - 1;
+        } 
+    
+        if(trigger_text === 'next') {
+            show_page = show_page + 1;
         }
-    } else {
-        if(inner_content === total_pages) {
-            alert('No more pages');
-            return;
+    };
+    
+    //After
+    if(show_page>total_pages || show_page<1) {
+        alert('Out of pages');
+        return;
+    }
+    
+    for (let page_num = 1; page_num <= total_pages; page_num++) {
+        let page_div = document.querySelector(`#${viewpage}_page_${page_num}`);
+        if(page_num === show_page) {
+            page_div.style.display = 'block';
         } else {
-            selected_page_tag.innerHTML = inner_content + 1;
+            page_div.style.display = 'none';
         }
+        
     }
 
-    let new_page = parseInt(selected_page_tag.innerHTML);
-    console.log(`
-        After switched to new page: ${new_page}\n
-    `);
-
-    return show_posts(viewpage, new_page);
+    console.log(`After switched => page= ${show_page}`);
+    selected_page_tag.innerHTML = show_page;
 }
 
