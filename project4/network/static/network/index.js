@@ -124,7 +124,7 @@ function show_posts(viewpage, page=1) {
                 // Edit
                 let edit_btn = document.querySelector(`#edit_post_${post.id}`);
                 edit_btn.addEventListener('click', () => {
-                    edit_post(post.id, post.sender);
+                    edit_post(post.id, post.sender, viewpage);
                 })
                 
                 // Like: ToDO
@@ -287,7 +287,7 @@ function paginator(trigger_text, total_pages, viewpage) {
     selected_page_tag.innerHTML = show_page;
 }
 
-function edit_post(post_id, post_sender) {
+function edit_post(post_id, post_sender, viewpage) {
     console.log(`Clicked on Edit post ${post_id}`);
     let current_user = document.querySelector('#profile').textContent;
     // console.log(`current_user: ${current_user}`);
@@ -324,7 +324,9 @@ function edit_post(post_id, post_sender) {
                 .then(response => response.json())
                 .then(result => {
                     console.log(`New content: ${result}`);
-                    load_view('all'); //Redirect to all-posts view
+                    document.querySelector('#content-view').style.display = 'block';
+                    document.querySelector('#edit-view').style.display = 'none';
+                    load_view(viewpage);
                 })
             };
         }
