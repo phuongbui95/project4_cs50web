@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Post #, Follow
+from .models import User, Post, Like #, Follow
 
 # Register your models here.
 class UserAdmin(admin.ModelAdmin):
@@ -22,11 +22,15 @@ class UserAdmin(admin.ModelAdmin):
 class PostAdmin(admin.ModelAdmin):
     list_display = ("id","sender","content","timestamp","likeNum")
 
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ("id","user","post_id")
+
 # class FollowAdmin(admin.ModelAdmin):
 #     list_display = ("id","user","user_followed","trigger_text")
 
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Post, PostAdmin)
+admin.site.register(Like, LikeAdmin)
 # admin.site.register(Follow, FollowAdmin)
 

@@ -23,7 +23,7 @@ class Post(models.Model):
     sender = models.ForeignKey("User", on_delete=models.PROTECT, related_name="posts_sent", null=True ) #PROTECT, not CASCADE
     content = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    likeNum = models.PositiveBigIntegerField(default=0)
+    likeNum = models.PositiveIntegerField(default=0)
 
     def serialize(self):
         return {
@@ -31,7 +31,7 @@ class Post(models.Model):
             "sender": self.sender.username,
             "content": self.content,
             "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
-            "like_number": self.likeNum
+            "likeNum": self.likeNum # be careful with how you set the name
         }
 
 # Follow
@@ -49,3 +49,6 @@ class Post(models.Model):
 #     )
 
 # Like
+class Like(models.Model):
+    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="who_liked_post", blank=True) 
+    post_id = models.ForeignKey("Post", on_delete=models.CASCADE, blank=True)

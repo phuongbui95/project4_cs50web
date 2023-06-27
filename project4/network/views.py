@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import User, Post
+from .models import User, Post, Like
 from django.core.paginator import Paginator
 
 
@@ -130,11 +130,16 @@ def post(request, post_id):
     elif request.method == "PUT":
         # Get content of post
         data = json.loads(request.body)
-        content = data.get("content", "")
+        # content = data.get("content", "")
 
-        # Get the user instance from the database
-        if content is not None:
-            post.content = content
+        # Update post's content
+        if data["content"] is not None:
+            post.content = data["content"]
+        # Update post's likeNum
+        if data["likeNum"] is not None:
+            post.content = data["likeNum"]
+
+        # Save the update
         post.save()
 
         return JsonResponse({"message": "Post edited successfully."}, status=201)

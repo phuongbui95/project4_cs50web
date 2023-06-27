@@ -98,7 +98,6 @@ function show_posts(viewpage, page=1) {
             // content of page container
             posts_per_page = posts.slice(page_num*10-10,page_num*10);
             posts_per_page.forEach(post => {
-                // console.log(`page_div: ${page_div}`);
                 if(!document.querySelector(`#${viewpage}_page_${page_num} > div.post_${post.id}`)) {
                     const post_div = document.createElement('div');
                     post_div.className = `post_${post.id}`;
@@ -106,6 +105,7 @@ function show_posts(viewpage, page=1) {
                                         <div class="sender_${post.sender}"><a href="#">@${post.sender}</a></div>
                                         <div class="content">${post.content}</div>
                                         <div class="timestamp">${post.timestamp}</div>
+                                        <div class="likeNum">#Like= ${post.likeNum}</div>
                                         <button id="like_post_${post.id}" name="like" type="submit" class="btn btn-primary">Like</button>
                                         <button id="edit_post_${post.id}" name="edit" type="submit" class="btn btn-primary">Edit</button>
                                         `;
@@ -127,8 +127,11 @@ function show_posts(viewpage, page=1) {
                     edit_post(post.id, post.sender, viewpage);
                 })
                 
-                // Like: ToDO
-                
+                // Like:
+                let like_btn = document.querySelector(`#like_post_${post.id}`);
+                like_btn.addEventListener('click', () => {
+                    like_post(post.id);
+                })
                 
             })
 
@@ -332,4 +335,9 @@ function edit_post(post_id, post_sender, viewpage) {
         }
     }
     
+}
+
+function like(post_id) {
+    console.log(`current_user: ${document.querySelector('#profile').textContent}`);
+    console.log(`${user} liked post ${post_id}`);
 }
