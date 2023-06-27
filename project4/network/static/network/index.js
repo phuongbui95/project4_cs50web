@@ -36,7 +36,8 @@ function compose() {
     
     // Submit post
     /* event listener must be placed at where the event is triggered */
-    document.querySelector('form').onsubmit = (event) => { 
+    // document.querySelector('form').onsubmit = (event) => { 
+    document.querySelector('#compose-form').onsubmit = (event) => { 
         console.log("Clicked on submit");
         let post_content = document.querySelector('#compose-body').value;
         if (post_content === '') alert('Cannot submit empty post!');
@@ -105,7 +106,8 @@ function show_posts(viewpage, page=1) {
                                         <div class="sender_${post.sender}"><a href="#">@${post.sender}</a></div>
                                         <div class="content">${post.content}</div>
                                         <div class="timestamp">${post.timestamp}</div>
-                                        <button name="like" type="submit" class="btn btn-primary">Like</button>
+                                        <button id="like_post_${post.id}" name="like" type="submit" class="btn btn-primary">Like</button>
+                                        <button id="edit_post_${post.id}" name="edit" type="submit" class="btn btn-primary">Edit</button>
                                         `;
                     post_div.style.border = '1px solid black';
                     
@@ -119,6 +121,13 @@ function show_posts(viewpage, page=1) {
                             console.log(`Clicked on ${post.sender}`);
                             load_view(`${post.sender}`);
                         })
+                // Edit
+                let edit_btn = document.querySelector(`#edit_post_${post.id}`);
+                edit_btn.addEventListener('click', () => {
+                    edit_post(post.id, post.sender);
+                })
+                
+                // Like: ToDO
                 
                 
             })
@@ -147,7 +156,8 @@ function show_posts(viewpage, page=1) {
             document.querySelector('#content-view').append(paginator_div);
         };
 
-        // Button Listener     
+        //== Button Listener ==//
+        // Paginator
         let previous_btn = document.querySelector(`#paginator > nav > ul > li.page-item.previous > a`);
         let next_btn = document.querySelector(`#paginator > nav > ul > li.page-item.next > a`);
         previous_btn.addEventListener('click', () => {
@@ -159,6 +169,7 @@ function show_posts(viewpage, page=1) {
                     console.log(`Clicked on Next`);
                     paginator('next', total_pages, viewpage);
                 })
+        
     });
 }
 
@@ -276,3 +287,47 @@ function paginator(trigger_text, total_pages, viewpage) {
     selected_page_tag.innerHTML = show_page;
 }
 
+function edit_post(post_id, post_sender) {
+    console.log(`Clicked on Edit post ${post_id}`);
+    let current_user = document.querySelector('#profile').textContent;
+    // console.log(`current_user: ${current_user}`);
+    // console.log(`post_sender: ${post_sender}`);
+
+    // if not requested user, alert
+    if(current_user !== post_sender) {
+        alert("You cannot edit other's post");
+    } else { // else, PUT method to update post's content
+        console.log('Update post');
+        // Hide and Show block of code
+        document.querySelector('#compose-view').style.display = 'none';
+        document.querySelector('#content-view').style.display = 'none';
+        document.querySelector('#edit-view').style.display = 'block';
+
+        // edit-view
+        // Clear out composition fields
+        document.querySelector('#edit-body').value = '';
+        
+        // Submit post
+        /* event listener must be placed at where the event is triggered */
+        document.querySelector('#edit-form').onsubmit = (event) => { 
+            console.log("Clicked on submit (edit)");
+            let post_content = document.querySelector('#edit-body').value;
+            if (post_content === '') alert('Cannot submit empty post!');
+            else {
+                // Udpate post's content
+                fetch(`posts/${post_id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        content: `${post_content}`
+                    })
+                })
+                .then(response => response.json())
+                .then(result => {
+                    console.log(`New content: ${result}`);
+                    load_view('all'); //Redirect to all-posts view
+                })
+            };
+        }
+    }
+    
+}

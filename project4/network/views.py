@@ -105,7 +105,6 @@ def viewpage(request, viewpage):
 
     elif User.objects.get(username=viewpage): #cannot use this line out of the condition statment => it will break Json
         posts = Post.objects.filter(sender=User.objects.get(username=viewpage))
-        
     else:
         return JsonResponse({"message": "Invalid viewpage"}, status=400)
     
@@ -129,7 +128,16 @@ def post(request, post_id):
         
     # Edit post
     elif request.method == "PUT":
-        pass
+        # Get content of post
+        data = json.loads(request.body)
+        content = data.get("content", "")
+
+        # Get the user instance from the database
+        if content is not None:
+            post.content = content
+        post.save()
+
+        return JsonResponse({"message": "Post edited successfully."}, status=201)
     # Post must be via GET or PUT
     else:
         return JsonResponse({

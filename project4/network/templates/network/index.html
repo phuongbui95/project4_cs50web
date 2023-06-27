@@ -13,9 +13,21 @@
             <input type="submit" class="btn btn-primary"/>
         </form>
     </div>
+
     <div id="content-view">
     </div>
     
+    <div id="edit-view" style="display: none;">
+        <h3>Edit Post</h3>
+        <form id="edit-form">
+            <textarea 
+                    class="form-control" 
+                    id="edit-body" 
+                    placeholder="What do you want to update?">
+            </textarea>
+            <input type="submit" class="btn btn-primary"/>
+        </form>
+    </div>
     <!-- <script type="text/babel" src="{% static 'network/react/Follow.js' %}"></script> -->
 {% endblock %}
 
