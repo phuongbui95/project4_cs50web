@@ -98,16 +98,17 @@ function show_posts(viewpage, page=1) {
             // content of page container
             posts_per_page = posts.slice(page_num*10-10,page_num*10);
             posts_per_page.forEach(post => {
+
                 if(!document.querySelector(`#${viewpage}_page_${page_num} > div.post_${post.id}`)) {
-                    const post_div = document.createElement('div');
+                    let post_div = document.createElement('div');
                     post_div.className = `post_${post.id}`;
                     post_div.innerHTML = `
                                         <div class="sender_${post.sender}"><a href="#">@${post.sender}</a></div>
                                         <div class="content">${post.content}</div>
                                         <div class="timestamp">${post.timestamp}</div>
-                                        <div class="likeNum">#Like= ${post.likeNum}</div>
-                                        <button id="like_post_${post.id}" name="like" type="submit" class="btn btn-primary">Like</button>
-                                        <button id="edit_post_${post.id}" name="edit" type="submit" class="btn btn-primary">Edit</button>
+                                        <div class="likeNum">#Like=<span>0</span></div>
+                                        <button id="like_post_${post.id}" name="like" type="submit" class="btn btn-primary">like</button>
+                                        <button id="edit_post_${post.id}" name="edit" type="submit" class="btn btn-primary">edit</button>
                                         `;
                     post_div.style.border = '1px solid black';
                     
@@ -115,6 +116,19 @@ function show_posts(viewpage, page=1) {
                     page_div.append(post_div);
                 }
                 
+                // Like status
+                let current_user = `${document.querySelector('#profile').textContent}`;
+                let like_num_div = document.querySelector(`#${viewpage}_page_${page_num} > div.post_${post.id} > div.likeNum > span`);
+                let like_btn_div = document.querySelector(`#like_post_${post.id}`);
+                let like_people = post.likePeople;
+                like_num_div.innerHTML = like_people.length;
+                if(like_people.includes(current_user)) {
+                    like_btn_div.innerHTML = "liked";
+                } else {
+                    like_btn_div.innerHTML = "like";
+                }
+                
+
                 //view profile
                 document.querySelector(`#content-view > div > div.post_${post.id} > div.sender_${post.sender} > a`)
                         .addEventListener('click', () => {
@@ -128,9 +142,14 @@ function show_posts(viewpage, page=1) {
                 })
                 
                 // Like:
-                let like_btn = document.querySelector(`#like_post_${post.id}`);
-                like_btn.addEventListener('click', () => {
-                    like_post(post.id);
+                like_btn_div.addEventListener('click', () => {
+                    like(post.id, post.sender, like_btn_div.textContent);
+                    // Change button text
+                    if(like_btn_div.textContent === "like") { 
+                        like_btn_div.innerHTML = "liked";
+                    } else {
+                        like_btn_div.innerHTML = "like";
+                    }
                 })
                 
             })
@@ -337,7 +356,29 @@ function edit_post(post_id, post_sender, viewpage) {
     
 }
 
-function like(post_id) {
-    console.log(`current_user: ${document.querySelector('#profile').textContent}`);
-    console.log(`${user} liked post ${post_id}`);
+function like(post_id, post_owner, trigger_text) {
+    let current_user = `${document.querySelector('#profile').textContent}`;
+    console.log(`post ${post_id} of ${post_owner}`);
+    console.log(`current_user: ${current_user}`);
+    console.log(`Before clicked: ${trigger_text}`);
+    
+    let like_status = "";
+    if(trigger_text === "like") {
+        like_status = "like";
+    } else {
+        like_status = "unlike";
+    }
+
+    fetch('/like', {
+        method: 'POST',
+        body: JSON.stringify({
+            post_id: post_id,
+            owner: `${post_owner}`,
+            like_status: `${like_status}`
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log(result);
+    })
 }

@@ -23,7 +23,8 @@ class Post(models.Model):
     sender = models.ForeignKey("User", on_delete=models.PROTECT, related_name="posts_sent", null=True ) #PROTECT, not CASCADE
     content = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    likeNum = models.PositiveIntegerField(default=0)
+    # likeNum = models.PositiveIntegerField(default=0)
+    likePeople = models.ManyToManyField('User', related_name="who_clicked_like", blank=True, symmetrical=False)
 
     def serialize(self):
         return {
@@ -31,7 +32,8 @@ class Post(models.Model):
             "sender": self.sender.username,
             "content": self.content,
             "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
-            "likeNum": self.likeNum # be careful with how you set the name
+            # "likeNum": self.likeNum # be careful with how you set the name
+            "likePeople": self.likePeople
         }
 
 # Follow
@@ -49,6 +51,9 @@ class Post(models.Model):
 #     )
 
 # Like
-class Like(models.Model):
-    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="who_liked_post", blank=True) 
-    post_id = models.ForeignKey("Post", on_delete=models.CASCADE, blank=True)
+# class Like(models.Model):
+#     post_id = models.ForeignKey("Post", on_delete=models.CASCADE, blank=True)
+#     owner = models.ForeignKey("User", on_delete=models.CASCADE, related_name="who_created_post", null=True )
+#     user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="who_liked_post", null=True) 
+#     like_status = models.CharField(max_length=10, default="liked")
+    

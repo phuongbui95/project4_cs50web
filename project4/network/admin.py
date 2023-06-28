@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Post, Like #, Follow
+from .models import User, Post #, Like #, Follow
 
 # Register your models here.
 class UserAdmin(admin.ModelAdmin):
@@ -20,10 +20,18 @@ class UserAdmin(admin.ModelAdmin):
     get_follower.short_description = 'Follower'
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ("id","sender","content","timestamp","likeNum")
+    list_display = ("id","sender","content","timestamp")
+    filter_horizontal = (
+                    'likePeople',
+                    ) #present a ManyToManyField in Django Admin Interface
+    
+    def get_like(self, obj):    
+        return " ".join([str(b) for b in obj.likePeople.all()])
 
-class LikeAdmin(admin.ModelAdmin):
-    list_display = ("id","user","post_id")
+    get_like.short_description = 'Who_liked'
+
+# class LikeAdmin(admin.ModelAdmin):
+#     list_display = ("id","post_id","owner","user","like_status")
 
 # class FollowAdmin(admin.ModelAdmin):
 #     list_display = ("id","user","user_followed","trigger_text")
@@ -31,6 +39,6 @@ class LikeAdmin(admin.ModelAdmin):
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Post, PostAdmin)
-admin.site.register(Like, LikeAdmin)
+# admin.site.register(Like, LikeAdmin)
 # admin.site.register(Follow, FollowAdmin)
 

@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import User, Post, Like
+from .models import User, Post
 from django.core.paginator import Paginator
 
 
@@ -135,9 +135,9 @@ def post(request, post_id):
         # Update post's content
         if data["content"] is not None:
             post.content = data["content"]
-        # Update post's likeNum
-        if data["likeNum"] is not None:
-            post.content = data["likeNum"]
+        # # Update post's likeNum
+        # if data["likeNum"] is not None:
+        #     post.content = data["likeNum"]
 
         # Save the update
         post.save()
@@ -194,4 +194,27 @@ def follow(request):
     who_clicked_follow.save()
  
     return JsonResponse({"message": "Post sent successfully."}, status=201)
+
+@csrf_exempt
+@login_required
+def like(request):
+    # Clicking follow-btn will trigger a POST request
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required"}, status=400)
     
+    # Get body of POST request
+    data = json.loads(request.body)
+    who_clicked = request.user
+    like_status = data.get("like_status","")
+    post_id = data.get("post_id","")
+
+    user_who_clicked = User.objects.get(username = who_clicked)
+    post = Post.objects.get(pk=post_id)
+    if like_status == "like":
+        post.likePeople.add(user_who_clicked)
+    else:
+        post.likePeople.remove(user_who_clicked)
+    
+    post.save()
+ 
+    return JsonResponse({"message": "Post sent successfully."}, status=201)
