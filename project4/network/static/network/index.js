@@ -117,16 +117,16 @@ function show_posts(viewpage, page=1) {
                 }
                 
                 // Like status
-                let current_user = `${document.querySelector('#profile').textContent}`;
-                let like_num_div = document.querySelector(`#${viewpage}_page_${page_num} > div.post_${post.id} > div.likeNum > span`);
-                let like_btn_div = document.querySelector(`#like_post_${post.id}`);
-                let like_people = post.likePeople;
-                like_num_div.innerHTML = like_people.length;
-                if(like_people.includes(current_user)) {
-                    like_btn_div.innerHTML = "liked";
-                } else {
-                    like_btn_div.innerHTML = "like";
-                }
+                // let current_user = `${document.querySelector('#profile').textContent}`;
+                // let like_num_div = document.querySelector(`#${viewpage}_page_${page_num} > div.post_${post.id} > div.likeNum > span`);
+                // let like_btn_div = document.querySelector(`#like_post_${post.id}`);
+                // let like_people = post.likePeople;
+                // like_num_div.innerHTML = like_people.length;
+                // if(like_people.includes(current_user)) {
+                //     like_btn_div.innerHTML = "liked";
+                // } else {
+                //     like_btn_div.innerHTML = "like";
+                // }
                 
 
                 //view profile
@@ -142,15 +142,15 @@ function show_posts(viewpage, page=1) {
                 })
                 
                 // Like:
-                like_btn_div.addEventListener('click', () => {
-                    like(post.id, post.sender, like_btn_div.textContent);
-                    // Change button text
-                    if(like_btn_div.textContent === "like") { 
-                        like_btn_div.innerHTML = "liked";
-                    } else {
-                        like_btn_div.innerHTML = "like";
-                    }
-                })
+                // like_btn_div.addEventListener('click', () => {
+                //     like(post.id, post.sender, like_btn_div.textContent);
+                //     // Change button text
+                //     if(like_btn_div.textContent === "like") { 
+                //         like_btn_div.innerHTML = "liked";
+                //     } else {
+                //         like_btn_div.innerHTML = "like";
+                //     }
+                // })
                 
             })
 
@@ -348,6 +348,7 @@ function edit_post(post_id, post_sender, viewpage) {
                     console.log(`New content: ${result}`);
                     document.querySelector('#content-view').style.display = 'block';
                     document.querySelector('#edit-view').style.display = 'none';
+                    alert(`post is edited successfully!`);
                     load_view(viewpage);
                 })
             };

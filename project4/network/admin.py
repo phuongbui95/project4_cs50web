@@ -20,7 +20,7 @@ class UserAdmin(admin.ModelAdmin):
     get_follower.short_description = 'Follower'
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ("id","sender","content","timestamp")
+    list_display = ("id","sender","content","timestamp","get_like")
     filter_horizontal = (
                     'likePeople',
                     ) #present a ManyToManyField in Django Admin Interface
@@ -28,17 +28,9 @@ class PostAdmin(admin.ModelAdmin):
     def get_like(self, obj):    
         return " ".join([str(b) for b in obj.likePeople.all()])
 
-    get_like.short_description = 'Who_liked'
-
-# class LikeAdmin(admin.ModelAdmin):
-#     list_display = ("id","post_id","owner","user","like_status")
-
-# class FollowAdmin(admin.ModelAdmin):
-#     list_display = ("id","user","user_followed","trigger_text")
-
+    get_like.short_description = 'who_liked'
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Post, PostAdmin)
-# admin.site.register(Like, LikeAdmin)
-# admin.site.register(Follow, FollowAdmin)
+
 

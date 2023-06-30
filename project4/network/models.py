@@ -33,27 +33,6 @@ class Post(models.Model):
             "content": self.content,
             "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
             # "likeNum": self.likeNum # be careful with how you set the name
-            "likePeople": self.likePeople
+            # "likePeople": self.likePeople
+            "likePeople": [self.username for self in self.likePeople.all()]
         }
-
-# Follow
-# class Follow(models.Model):
-#     user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="who_clicked_btn", null=True) 
-#     user_followed = models.ForeignKey("User", on_delete=models.CASCADE, related_name="who_is_followed", null=True )
-#     TRIGGER_CHOICES = [
-#         ("follow", "Follow"),
-#         ("unfollow", "UnFollow"),
-#     ]
-#     trigger_text = models.CharField(
-#         max_length=10,
-#         choices=TRIGGER_CHOICES,
-#         default="follow",
-#     )
-
-# Like
-# class Like(models.Model):
-#     post_id = models.ForeignKey("Post", on_delete=models.CASCADE, blank=True)
-#     owner = models.ForeignKey("User", on_delete=models.CASCADE, related_name="who_created_post", null=True )
-#     user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="who_liked_post", null=True) 
-#     like_status = models.CharField(max_length=10, default="liked")
-    
