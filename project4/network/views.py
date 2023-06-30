@@ -205,16 +205,17 @@ def like(request):
     # Get body of POST request
     data = json.loads(request.body)
     who_clicked = request.user
-    like_status = data.get("like_status","")
+    post_owner = data.get("owner","")
+    trigger_text = data.get("trigger_text","")
     post_id = data.get("post_id","")
 
     user_who_clicked = User.objects.get(username = who_clicked)
     post = Post.objects.get(pk=post_id)
-    if like_status == "like":
+    if trigger_text == "like":
         post.likePeople.add(user_who_clicked)
     else:
         post.likePeople.remove(user_who_clicked)
     
     post.save()
  
-    return JsonResponse({"message": "Post sent successfully."}, status=201)
+    return JsonResponse({"message": f"{who_clicked} liked post {post_id} of {post_owner} successfully."}, status=201)

@@ -117,16 +117,16 @@ function show_posts(viewpage, page=1) {
                 }
                 
                 // Like status
-                // let current_user = `${document.querySelector('#profile').textContent}`;
-                // let like_num_div = document.querySelector(`#${viewpage}_page_${page_num} > div.post_${post.id} > div.likeNum > span`);
-                // let like_btn_div = document.querySelector(`#like_post_${post.id}`);
-                // let like_people = post.likePeople;
-                // like_num_div.innerHTML = like_people.length;
-                // if(like_people.includes(current_user)) {
-                //     like_btn_div.innerHTML = "liked";
-                // } else {
-                //     like_btn_div.innerHTML = "like";
-                // }
+                let current_user = `${document.querySelector('#profile').textContent}`;
+                let like_num_div = document.querySelector(`#${viewpage}_page_${page_num} > div.post_${post.id} > div.likeNum > span`);
+                let like_btn_div = document.querySelector(`#like_post_${post.id}`);
+                let like_people = post.likePeople;
+                like_num_div.innerHTML = like_people.length;
+                if(like_people.includes(current_user)) {
+                    like_btn_div.innerHTML = "liked";
+                } else {
+                    like_btn_div.innerHTML = "like";
+                }
                 
 
                 //view profile
@@ -135,6 +135,7 @@ function show_posts(viewpage, page=1) {
                             console.log(`Clicked on ${post.sender}`);
                             load_view(`${post.sender}`);
                         })
+
                 // Edit
                 let edit_btn = document.querySelector(`#edit_post_${post.id}`);
                 edit_btn.addEventListener('click', () => {
@@ -142,15 +143,16 @@ function show_posts(viewpage, page=1) {
                 })
                 
                 // Like:
-                // like_btn_div.addEventListener('click', () => {
-                //     like(post.id, post.sender, like_btn_div.textContent);
-                //     // Change button text
-                //     if(like_btn_div.textContent === "like") { 
-                //         like_btn_div.innerHTML = "liked";
-                //     } else {
-                //         like_btn_div.innerHTML = "like";
-                //     }
-                // })
+                like_btn_div.addEventListener('click', () => {
+                    like(post.id, post.sender, like_btn_div.textContent);
+                    // Change button text
+                    if(like_btn_div.textContent === "like") { 
+                        like_btn_div.innerHTML = "liked";
+                    } else {
+                        like_btn_div.innerHTML = "like";
+                    }
+                    
+                })
                 
             })
 
@@ -363,19 +365,12 @@ function like(post_id, post_owner, trigger_text) {
     console.log(`current_user: ${current_user}`);
     console.log(`Before clicked: ${trigger_text}`);
     
-    let like_status = "";
-    if(trigger_text === "like") {
-        like_status = "like";
-    } else {
-        like_status = "unlike";
-    }
-
     fetch('/like', {
         method: 'POST',
         body: JSON.stringify({
             post_id: post_id,
             owner: `${post_owner}`,
-            like_status: `${like_status}`
+            trigger_text: `${trigger_text}`
         })
     })
     .then(response => response.json())
