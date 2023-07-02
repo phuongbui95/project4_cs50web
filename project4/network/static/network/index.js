@@ -106,7 +106,7 @@ function show_posts(viewpage, page=1) {
                                         <div class="sender_${post.sender}"><a href="#">@${post.sender}</a></div>
                                         <div class="content">${post.content}</div>
                                         <div class="timestamp">${post.timestamp}</div>
-                                        <div class="likeNum">#Like=<span>0</span></div>
+                                        <div class="likeNum">#Like=<span>${post.likePeople.length}</span></div>
                                         <button id="like_post_${post.id}" name="like" type="submit" class="btn btn-primary">like</button>
                                         <button id="edit_post_${post.id}" name="edit" type="submit" class="btn btn-primary">edit</button>
                                         `;
@@ -118,14 +118,17 @@ function show_posts(viewpage, page=1) {
                 
                 // Like status
                 let current_user = `${document.querySelector('#profile').textContent}`;
+                
                 let like_num_div = document.querySelector(`#${viewpage}_page_${page_num} > div.post_${post.id} > div.likeNum > span`);
                 let like_btn_div = document.querySelector(`#like_post_${post.id}`);
                 let like_people = post.likePeople;
                 like_num_div.innerHTML = like_people.length;
+                
                 if(like_people.includes(current_user)) {
                     like_btn_div.innerHTML = "liked";
                 } else {
                     like_btn_div.innerHTML = "like";
+                    
                 }
                 
 
@@ -145,13 +148,15 @@ function show_posts(viewpage, page=1) {
                 // Like:
                 like_btn_div.addEventListener('click', () => {
                     like(post.id, post.sender, like_btn_div.textContent);
-                    // Change button text
+                    // Change Displya of like_btn and like_num
                     if(like_btn_div.textContent === "like") { 
                         like_btn_div.innerHTML = "liked";
+                        like_num_div.innerHTML = parseInt(like_num_div.innerHTML)+1;
                     } else {
                         like_btn_div.innerHTML = "like";
+                        like_num_div.innerHTML = parseInt(like_num_div.innerHTML)-1;
                     }
-                    
+                    console.log(`like_num= ${like_num_div.innerHTML}`);
                 })
                 
             })
