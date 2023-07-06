@@ -101,14 +101,15 @@ function show_posts(viewpage, page=1) {
 
                 if(!document.querySelector(`#${viewpage}_page_${page_num} > div.post_${post.id}`)) {
                     let post_div = document.createElement('div');
-                    post_div.className = `post_${post.id}`;
+                    post_div.className = `post-container post_${post.id}`;
                     post_div.innerHTML = `
-                                        <div class="sender_${post.sender}"><a href="#">@${post.sender}</a></div>
+                                        <div class="sender_${post.sender}"><a href="#">@${post.sender}</a> on ${post.timestamp}</div>
                                         <div class="content">${post.content}</div>
-                                        <div class="timestamp">${post.timestamp}</div>
-                                        <div class="likeNum">#Like=<span>${post.likePeople.length}</span></div>
-                                        <button id="like_post_${post.id}" name="like" type="submit" class="btn btn-primary">like</button>
-                                        <button id="edit_post_${post.id}" name="edit" type="submit" class="btn btn-primary">edit</button>
+                                        <div class="likeNum">
+                                            <button id="like_post_${post.id}" name="like" type="submit" class="btn btn-primary">like</button>
+                                            <span>${post.likePeople.length}</span>
+                                        </div>
+                                        <button id="edit_post_${post.id}" name="edit" type="submit" class="btn btn-primary top-right">edit</button>
                                         `;
                     post_div.style.border = '1px solid black';
                     
@@ -221,17 +222,18 @@ function show_follow_and_posts(username) {
         console.log('following num: ',following_users.length);
         console.log('follower num: ',follower_users.length);
         follow_div.innerHTML = `
-                            <button class="follow-btn">${follow_btn_text}</button>
-                            <div class="follower"><a href="#">Followers</a>: ${follower_users.length}</div>
-                            <div class="following"><a href="#">Following</a>: ${following_users.length}</div>
+                            <div class="follower following">
+                                <a href="#">Followers:</a> <span>${follower_users.length}</span> 
+                                <a href="#">Following:</a> <span>${following_users.length}</span>
+                                <button class="follow-btn">${follow_btn_text}</button>
+                            </div>
                             `;
         // If #content-view of profile does not exist, add it                            
         if (!document.querySelector(`#content-view > div#profile_${username}`)) {
             document.querySelector('#content-view').append(follow_div);
         }
-    
         // Initialize follow_btn
-        let follow_btn = document.querySelector(`#profile_${username} > .follow-btn`);
+        let follow_btn = document.querySelector(`#profile_${username} > div> .follow-btn`);
         // Hide Follow button if profile page is of current user
         if (username === current_user_div.textContent) {
             follow_btn.style.display = 'none';    
@@ -246,14 +248,14 @@ function show_follow_and_posts(username) {
                 follow_btn.textContent //trigger_text
             );
             // Change button text
+            let follower_num_div = document.querySelector(`#profile_${username} > div.follower > span`);
             if(follow_btn.textContent === "follow") { 
                 follow_btn.innerHTML = "unfollow";
+                follower_num_div.innerHTML = parseInt(follower_num_div.innerHTML)+1;
             } else {
-                follow_btn.innerHTML = "follow"
+                follow_btn.innerHTML = "follow";
+                follower_num_div.innerHTML = parseInt(follower_num_div.innerHTML)-1;
             }
-
-            alert(`${current_user_div.textContent} ${follow_btn_text}ed ${username}. Back to home-page`);
-            load_view('all');
         })
 
         show_posts(username);

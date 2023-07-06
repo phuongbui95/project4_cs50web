@@ -1,0 +1,57 @@
+/*----- Body ----- */
+body {
+    background-color: lightblue;
+}
+
+/* the whole body block */
+.body {
+    margin: 1%;
+}
+
+/*---- Navigation Bar ----*/
+.navbar {
+    position: relative;
+}
+
+.navbar-right {
+    position: absolute;
+    top: 10px;
+    right: 16px;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+/*----- Form ----- */
+.form-control, #paginator {
+    border-radius: 15px;
+}
+
+/*----- Posts ----- */
+/* top right: https://www.w3schools.com/Css/tryit.asp?filename=trycss_image_text_top_right */
+/* border radius: https://www.w3schools.com/cssref/tryit.php?filename=trycss3_border-radius */
+.post-container {
+    position: relative;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 20px;
+  }
+  
+.top-right {
+    position: absolute;
+    top: 8px;
+    right: 16px;
+    font-size: 18px;
+}
+
+#post-btn {
+    margin-top:1%;
+    margin-bottom: 1%;
+}
+
+/*----- Profile page ----- */
+.follower, .following {
+    font-weight: bold;
+}
