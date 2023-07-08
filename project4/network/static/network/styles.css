@@ -1,22 +1,28 @@
 /*----- Body ----- */
 body {
-    background-color: lightblue;
+    background-color: lightcyan;
 }
 
 /* the whole body block */
 .body {
-    margin: 1%;
+    margin-left: 2%;
+    margin-right: 2%;
 }
 
 /*---- Navigation Bar ----*/
-.navbar {
-    position: relative;
-}
+.grid-container {
+    display: grid;
+    grid-template-columns: 33% 33% auto;
+    /* padding: 10px; */
+  }
+  
+.grid-item {
+    text-align: center;
+  }
 
-.navbar-right {
-    position: absolute;
-    top: 10px;
-    right: 16px;
+.grid-item:nth-child(3) {
+    /* border: 2px solid black; */
+    margin-left: 75px;
 }
 
 .navbar-brand {

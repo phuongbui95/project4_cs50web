@@ -54,7 +54,7 @@ function load_view(viewpage) {
     document.querySelector('#compose-view').style.display = 'block';
     // Show the view name
     let text = viewpage;
-    if (viewpage === "all") text = "all post";
+    if (viewpage === "all") text = "all posts";
     document.querySelector('#content-view').innerHTML = `<h3>
                                                             ${text.charAt(0).toUpperCase() + text.slice(1)}
                                                         </h3>`;
