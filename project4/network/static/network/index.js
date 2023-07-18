@@ -103,13 +103,13 @@ function show_posts(viewpage, page=1) {
                     let post_div = document.createElement('div');
                     post_div.className = `post-container post_${post.id}`;
                     post_div.innerHTML = `
-                                        <div class="sender_${post.sender}"><a href="#">@${post.sender}</a> on ${post.timestamp}</div>
+                                        <div class="sender_${post.sender} intro"><a href="#">@${post.sender}</a> on ${post.timestamp}</div>
                                         <div class="content">${post.content}</div>
                                         <div class="likeNum">
-                                            <button id="like_post_${post.id}" name="like" type="submit" class="btn btn-primary">like</button>
+                                            <button id="like_post_${post.id}" name="like" type="submit" class="btn btn-primary likeBtn">like</button>
                                             <span>${post.likePeople.length}</span>
                                         </div>
-                                        <button id="edit_post_${post.id}" name="edit" type="submit" class="btn btn-primary top-right">edit</button>
+                                        <button id="edit_post_${post.id}" name="edit" type="submit" class="btn btn-primary top-right editBtn">edit</button>
                                         `;
                     post_div.style.border = '1px solid black';
                     
@@ -358,7 +358,7 @@ function edit_post(post_id, post_sender, viewpage) {
                     document.querySelector('#content-view').style.display = 'block';
                     document.querySelector('#edit-view').style.display = 'none';
                     alert(`post is edited successfully!`);
-                    load_view(viewpage);
+                    load_view(post_sender);
                 })
             };
         }

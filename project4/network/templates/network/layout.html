@@ -13,14 +13,14 @@
         <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light grid-container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <img src="https://th.bing.com/th/id/OIP.FTuzNPb_oaTDiBYvu70QqgHaHJ?pid=ImgDet&w=1994&h=1924&rs=1" 
                 alt="bird_icon"
                 style="width: 70px"
-                class="grid-item"
+                class="header-item1"
             >
-            <a class="navbar-brand grid-item" href="{% url 'index' %}"> PB Network</a>
-            <ul class="navbar-nav mr-auto grid-item">
+            <a class="navbar-brand" href="{% url 'index' %}"> PB Network</a>
+            <ul class="navbar-nav mr-auto">
             {% if user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="#" id="profile"><strong>{{ user.username }}</strong></a>
@@ -47,7 +47,7 @@
                 </li>
             {% endif %}
             </ul>
-          </nav>
+        </nav>
         
         <div class="body">
             {% block body %}
