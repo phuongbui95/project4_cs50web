@@ -12,9 +12,15 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import User, Post
 from django.core.paginator import Paginator
 
-
 def index(request):
-    return render(request, "network/index.html")
+    # Authenticated users view their inbox
+    if request.user.is_authenticated:
+        return render(request, "network/index.html")
+
+    # Everyone else is prompted to sign in
+    else:
+        return HttpResponseRedirect(reverse("login"))
+    
 
 
 def login_view(request):

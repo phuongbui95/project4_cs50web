@@ -17,6 +17,10 @@ body {
     transform: translateX(-50%);
 }
 
+.icon {
+    margin-left: 1%;
+}
+
 .navbar-nav {
     /* display to the right with 2% indentation */
     position: absolute;
