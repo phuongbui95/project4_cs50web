@@ -22,6 +22,7 @@ function submit_post(contentVar) {
     .then(response => response.json())
     .then(result => {
         console.log(result);
+        show_posts();
     })
 }
 
@@ -83,6 +84,8 @@ function show_posts(viewpage, page=1) {
         console.log(`page = ${page}`);
         // Pagination
         for (let page_num = 1; page_num <= total_pages; page_num++) {
+            // Clear out composition fields
+            document.querySelector('#compose-body').value = '';
             //=== Page num level ====//
             // if page container exists, do no append
             let page_div;
@@ -132,6 +135,7 @@ function show_posts(viewpage, page=1) {
                     
                 }
                 
+                
 
                 //view profile
                 document.querySelector(`#content-view > div > div.post_${post.id} > div.sender_${post.sender} > a`)
@@ -143,7 +147,7 @@ function show_posts(viewpage, page=1) {
                 // Edit
                 let edit_btn = document.querySelector(`#edit_post_${post.id}`);
                 edit_btn.addEventListener('click', () => {
-                    edit_post(post.id, post.sender, viewpage);
+                    edit_post(post.id, post.sender, post.content, viewpage);
                 })
                 
                 // Like:
@@ -318,12 +322,11 @@ function paginator(trigger_text, total_pages, viewpage) {
     selected_page_tag.innerHTML = show_page;
 }
 
-function edit_post(post_id, post_sender, viewpage) {
+function edit_post(post_id, post_sender, post_content, viewpage) {
     console.log(`Clicked on Edit post ${post_id}`);
     let current_user = document.querySelector('#profile').textContent;
     // console.log(`current_user: ${current_user}`);
     // console.log(`post_sender: ${post_sender}`);
-
     // if not requested user, alert
     if(current_user !== post_sender) {
         alert("You cannot edit other's post");
@@ -335,8 +338,7 @@ function edit_post(post_id, post_sender, viewpage) {
         document.querySelector('#edit-view').style.display = 'block';
 
         // edit-view
-        // Clear out composition fields
-        document.querySelector('#edit-body').value = '';
+        document.querySelector('#edit-body').value = post_content;
         
         // Submit post
         /* event listener must be placed at where the event is triggered */
@@ -358,7 +360,7 @@ function edit_post(post_id, post_sender, viewpage) {
                     document.querySelector('#content-view').style.display = 'block';
                     document.querySelector('#edit-view').style.display = 'none';
                     alert(`post is edited successfully!`);
-                    load_view(post_sender);
+                    load_view(viewpage);
                 })
             };
         }
